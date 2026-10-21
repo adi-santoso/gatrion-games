@@ -1,0 +1,12 @@
+# cache unduhan kamus (dibuat tools/build-wordle-dict.js)
+.cache/
+
+# artefak verifikasi lokal
+artifacts/
+
+node_modules/
+.DS_Store
+
+# build output
+dist/
+coverage/
