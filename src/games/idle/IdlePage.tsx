@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { SegmentedControl } from "../../components/SegmentedControl";
-import { Shell } from "../../components/Shell";
+import { ThemeToggle } from "../../components/ThemeToggle";
 import { Toast } from "../../components/Toast";
 import { formatDuration, formatNumber } from "../../lib/format";
 import { AchievementsList } from "./components/AchievementsList";
@@ -34,6 +35,19 @@ const BUY_OPTIONS: Array<{ value: BuyAmount; label: string }> = [
 ];
 
 type TabId = "mine" | "research" | "prestige" | "archive";
+type DestinationId = "home" | "character" | "inventory" | "upgrade" | "map" | "settings";
+
+const DESTINATIONS: Array<{
+  id: Exclude<DestinationId, "settings">;
+  label: string;
+  icon: string;
+}> = [
+  { id: "home", label: "Home", icon: "⌂" },
+  { id: "character", label: "Character", icon: "♙" },
+  { id: "inventory", label: "Inventory", icon: "▣" },
+  { id: "upgrade", label: "Upgrade", icon: "↟" },
+  { id: "map", label: "Peta Dunia", icon: "⌖" },
+];
 
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: "mine", label: "tambang" },
@@ -47,6 +61,40 @@ export function IdlePage() {
   const { save } = idle;
   const [prestigeOpen, setPrestigeOpen] = useState(false);
   const [tab, setTab] = useState<TabId>("mine");
+  const [destination, setDestination] = useState<DestinationId>("home");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const navigateTo = (next: DestinationId) => {
+    setDestination(next);
+    if (next === "settings") {
+      setSettingsOpen(true);
+      return;
+    }
+
+    setSettingsOpen(false);
+    if (next === "inventory") setTab("archive");
+    if (next === "upgrade") setTab("research");
+    if (next === "home" || next === "character" || next === "map") setTab("mine");
+
+    const targetId = {
+      home: "idle-dashboard",
+      character: "auto",
+      inventory: "archive-panel",
+      upgrade: "idle-panel",
+      map: "depth-map",
+    }[next];
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => {
+        document.getElementById(targetId)?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+      });
+    }
+  };
+
+  const setPanelTab = (next: TabId) => {
+    setTab(next);
+    setSettingsOpen(false);
+    setDestination(next === "archive" ? "inventory" : next === "mine" ? "home" : "upgrade");
+  };
 
   const rate = production(save);
   const gain = clickGain(save);
@@ -59,9 +107,73 @@ export function IdlePage() {
   const canPrestige = pendingCores > 0;
 
   return (
-    <Shell>
-      <main className="pb-20">
-        <div className="idle-cabinet">
+    <div className="idle-layout">
+      <aside className="idle-sidebar" aria-label="Navigasi Gatrion">
+        <Link to="/" className="idle-brand">
+          <span className="idle-brand-mark" aria-hidden="true">G</span>
+          <span>
+            <strong>GATRION</strong>
+            <small>CRYSTAL MINE</small>
+          </span>
+        </Link>
+
+        <nav className="idle-primary-nav" aria-label="Menu idle">
+          {DESTINATIONS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className="idle-nav-item"
+              data-active={destination === item.id ? "true" : "false"}
+              aria-current={destination === item.id ? "page" : undefined}
+              data-nav={item.id}
+              onClick={() => navigateTo(item.id)}
+            >
+              <span className="idle-nav-icon" aria-hidden="true">{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+          <button
+            type="button"
+            className="idle-nav-item"
+            data-active={destination === "settings" ? "true" : "false"}
+            aria-current={destination === "settings" ? "page" : undefined}
+            aria-expanded={settingsOpen}
+            aria-controls="idle-settings"
+            data-nav="settings"
+            onClick={() => navigateTo("settings")}
+          >
+            <span className="idle-nav-icon" aria-hidden="true">⚙</span>
+            <span>Settings</span>
+          </button>
+        </nav>
+
+        <section
+          id="idle-settings"
+          className="idle-settings-panel"
+          aria-label="Pengaturan game"
+          hidden={!settingsOpen}
+        >
+          <span className="idle-settings-title">Tema</span>
+          <ThemeToggle />
+        </section>
+
+        <div className="idle-sidebar-links">
+          <Link to="/">Semua game</Link>
+          <Link to="/wordle">Wordle</Link>
+        </div>
+      </aside>
+
+      <div className="idle-workspace">
+        <header className="idle-workspace-header">
+          <div>
+            <span className="idle-eyebrow">GATRION / IDLE</span>
+            <h1>Tambang Kristal</h1>
+          </div>
+          <span className="idle-workspace-status"><i aria-hidden="true" /> Dunia tersimpan otomatis</span>
+        </header>
+
+        <main className="idle-main">
+        <div id="idle-dashboard" className="idle-cabinet">
           <div className="idle-top">
             <div className="flex items-baseline gap-2">
               <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink">
@@ -157,7 +269,7 @@ export function IdlePage() {
                 type="button"
                 className="tab-btn"
                 aria-pressed={tab === item.id}
-                onClick={() => setTab(item.id)}
+                onClick={() => setPanelTab(item.id)}
               >
                 {item.label}
               </button>
@@ -165,7 +277,7 @@ export function IdlePage() {
           </div>
 
           <div className="grid lg:grid-cols-[minmax(0,1fr)_264px]">
-            <div className="min-w-0 py-1">
+            <div id="idle-panel" className="min-w-0 py-1">
               {tab === "mine" && (
                 <>
                   <div className="panel-head flex-wrap">
@@ -214,7 +326,7 @@ export function IdlePage() {
               )}
 
               {tab === "archive" && (
-                <>
+                <section id="archive-panel" aria-label="Inventory dan arsip">
                   <div className="panel-head">
                     <span className="panel-title">arsip tambang</span>
                     <span className="mono text-[10px] text-muted">
@@ -238,7 +350,7 @@ export function IdlePage() {
                     <span className="panel-title">lencana</span>
                   </div>
                   <AchievementsList save={save} />
-                </>
+                </section>
               )}
             </div>
 
@@ -264,27 +376,28 @@ export function IdlePage() {
             </aside>
           </div>
         </div>
-      </main>
+        </main>
 
-      <Toast message={idle.toast} />
-      <OfflineDialog report={idle.offline} rate={rate} onClose={idle.dismissOffline} />
-      {prestigeOpen && (
-        <PrestigeDialog
-          gain={pendingCores}
-          onClose={() => setPrestigeOpen(false)}
-          onConfirm={() => {
-            setPrestigeOpen(false);
-            idle.runPrestige();
-          }}
-        />
-      )}
-    </Shell>
+        <Toast message={idle.toast} />
+        <OfflineDialog report={idle.offline} rate={rate} onClose={idle.dismissOffline} />
+        {prestigeOpen && (
+          <PrestigeDialog
+            gain={pendingCores}
+            onClose={() => setPrestigeOpen(false)}
+            onConfirm={() => {
+              setPrestigeOpen(false);
+              idle.runPrestige();
+            }}
+          />
+        )}
+      </div>
+    </div>
   );
 }
 
 function DepthStrip({ save }: { save: IdleSave }) {
   return (
-    <div className="depth">
+    <div id="depth-map" className="depth">
       {GENERATORS.map((generator, index) => {
         const owned = save.gens[generator.id] ?? 0;
         const on = isUnlocked(save, generator);

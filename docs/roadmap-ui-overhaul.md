@@ -30,7 +30,7 @@ Mockup menjadi sasaran visual dan susunan informasi. Fondasi permainan tetap idl
 
 **Selesai bila:** setiap area mockup punya sumber state dan aksi yang jelas, aturan reset/persistensi ditetapkan, dan fitur baru tidak ditampilkan sebelum loop-nya selesai.
 
-### M1 — Kerangka navigasi dan tata letak dunia
+### M1 — Kerangka navigasi dan tata letak dunia (selesai)
 
 **Hasil:** bentuk layar mengikuti hierarki mockup: navigasi sisi, HUD atas, area utama, panel samping, dan area panel bawah.
 
@@ -38,6 +38,7 @@ Mockup menjadi sasaran visual dan susunan informasi. Fondasi permainan tetap idl
 - Pindahkan fitur lama ke tujuan yang sesuai tanpa mengubah rumus ekonomi: Bangunan/Tambang untuk generator, Riset untuk upgrade putaran, Inventory/Arsip untuk statistik dan pencapaian, Peta untuk progres tier.
 - Panel aktivitas dan aksi cepat hanya menautkan ke fitur yang memang sudah dapat dipakai.
 - Pertahankan fallback akses ke seluruh fitur jika layout baru belum memuat sebuah panel.
+- Implementasi: sidebar desktop dan menu horizontal mobile; Home membuka kabinet tambang, Character menuju mandor, Inventory ke arsip/statistik, Upgrade ke riset, Peta Dunia ke strip progres tier, dan Settings ke tema. Tautan ke hub dan Wordle tetap tersedia.
 
 **Masih bisa dimainkan:** pemain dapat mengumpulkan kristal, mengetuk bonus, membeli generator, mengganti tab, membuka riset/peleburan/arsip, dan menyimpan progres dari layout baru.
 

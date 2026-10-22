@@ -1612,3 +1612,325 @@
     flex-wrap: wrap;
   }
 }
+
+
+/* M1 — responsive shell and navigation for the idle game. */
+.idle-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: 218px minmax(0, 1fr);
+  background: var(--color-bg);
+}
+
+.idle-sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 100vh;
+  min-height: 560px;
+  flex-direction: column;
+  padding: 1.15rem 0.8rem 1rem;
+  border-right: 1px solid #2b3b2c;
+  background: linear-gradient(180deg, #152218, #101710 76%);
+  color: #edf5df;
+}
+
+.idle-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.2rem 0.45rem 1.4rem;
+  color: #edf5df;
+  text-decoration: none;
+}
+
+.idle-brand-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.52);
+  border-radius: 12px 12px 12px 4px;
+  background: linear-gradient(145deg, rgba(200, 243, 106, 0.18), rgba(200, 243, 106, 0.035));
+  color: #c8f36a;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.idle-brand > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.idle-brand strong {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  letter-spacing: 0.14em;
+}
+
+.idle-brand small,
+.idle-eyebrow {
+  color: #96a88f;
+  font-family: var(--font-mono);
+  font-size: 0.57rem;
+  letter-spacing: 0.14em;
+}
+
+.idle-primary-nav {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.idle-nav-item {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.72rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #a8b6a1;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  text-align: left;
+  cursor: pointer;
+  transition: color 140ms ease, background 140ms ease, border-color 140ms ease;
+}
+
+.idle-nav-item:hover {
+  border-color: rgba(200, 243, 106, 0.13);
+  background: rgba(200, 243, 106, 0.055);
+  color: #edf5df;
+}
+
+.idle-nav-item[data-active="true"] {
+  border-color: rgba(200, 243, 106, 0.2);
+  background: linear-gradient(90deg, rgba(200, 243, 106, 0.14), rgba(200, 243, 106, 0.035));
+  color: #d8f69c;
+  box-shadow: inset 2px 0 #c8f36a;
+}
+
+.idle-nav-icon {
+  display: grid;
+  width: 1.2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #9bab91;
+  font-size: 1rem;
+}
+
+.idle-nav-item[data-active="true"] .idle-nav-icon {
+  color: #c8f36a;
+}
+
+.idle-settings-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  padding: 0.7rem;
+  border: 1px solid #344a35;
+  border-radius: 9px;
+  background: rgba(5, 12, 7, 0.4);
+}
+
+.idle-settings-panel[hidden] {
+  display: none;
+}
+
+.idle-settings-title {
+  color: #a8b6a1;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.idle-sidebar .theme-toggle {
+  border-color: #425740;
+  background: #1b281e;
+  color: #d8e4cf;
+}
+
+.idle-sidebar-links {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: auto;
+  padding: 1rem 0.7rem 0;
+  border-top: 1px solid rgba(151, 194, 123, 0.15);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+}
+
+.idle-sidebar-links a {
+  color: #96a88f;
+  text-decoration: none;
+}
+
+.idle-sidebar-links a:hover {
+  color: #d8f69c;
+}
+
+.idle-workspace {
+  min-width: 0;
+}
+
+.idle-workspace-header {
+  display: flex;
+  min-height: 76px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem clamp(1rem, 2.4vw, 2.2rem);
+  border-bottom: 1px solid rgba(132, 165, 113, 0.14);
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+}
+
+.idle-workspace-header h1 {
+  margin: 0.2rem 0 0;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.idle-workspace-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.idle-workspace-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c8f36a;
+  box-shadow: 0 0 9px rgba(200, 243, 106, 0.5);
+}
+
+.idle-main {
+  width: min(100%, 1500px);
+  margin-inline: auto;
+  padding: clamp(0.8rem, 2vw, 1.6rem);
+}
+
+.idle-main .idle-cabinet {
+  width: 100%;
+  max-width: none;
+}
+
+@media (max-width: 760px) {
+  .idle-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .idle-sidebar {
+    position: sticky;
+    z-index: 30;
+    top: 0;
+    height: auto;
+    min-height: 0;
+    gap: 0.55rem;
+    padding: 0.55rem 0.7rem 0.45rem;
+    border-right: 0;
+    border-bottom: 1px solid #2b3b2c;
+  }
+
+  .idle-brand {
+    gap: 0.5rem;
+    padding: 0.05rem 0.2rem 0.35rem;
+  }
+
+  .idle-brand-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px 9px 9px 3px;
+    font-size: 1rem;
+  }
+
+  .idle-brand > span:last-child {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .idle-brand strong {
+    font-size: 0.75rem;
+  }
+
+  .idle-primary-nav {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+
+  .idle-nav-item {
+    min-width: max-content;
+    min-height: 40px;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.55rem;
+    font-size: 0.69rem;
+  }
+
+  .idle-nav-item[data-active="true"] {
+    box-shadow: inset 0 -2px #c8f36a;
+  }
+
+  .idle-nav-icon {
+    width: auto;
+    font-size: 0.85rem;
+  }
+
+  .idle-settings-panel {
+    align-self: flex-start;
+    margin-top: 0;
+  }
+
+  .idle-sidebar-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0;
+    padding: 0.35rem 0.2rem 0;
+    border-top: 1px solid rgba(151, 194, 123, 0.1);
+    font-size: 0.58rem;
+  }
+
+  .idle-workspace-header {
+    min-height: 62px;
+    padding: 0.6rem 0.85rem;
+  }
+
+  .idle-workspace-status {
+    max-width: 42%;
+    white-space: normal;
+  }
+
+  .idle-main {
+    padding: 0.65rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .idle-nav-item {
+    gap: 0.3rem;
+    padding-inline: 0.45rem;
+    font-size: 0.63rem;
+  }
+
+  .idle-workspace-status {
+    font-size: 0.55rem;
+  }
+}
