@@ -1947,9 +1947,16 @@
   min-height: 470px;
   border-radius: 13px;
   background:
-    radial-gradient(ellipse at 50% 40%, rgba(178, 239, 107, 0.2), transparent 34%),
-    radial-gradient(ellipse at 50% 100%, rgba(38, 100, 51, 0.62), transparent 60%),
-    linear-gradient(180deg, #223d2b 0%, #1b3022 48%, #0d1811 100%);
+    linear-gradient(180deg, rgba(5, 12, 10, 0.12), rgba(5, 12, 10, 0.04) 52%, rgba(5, 12, 10, 0.5)),
+    url("/images/idle/mine-scene.png") center 52% / cover no-repeat;
+}
+
+.idle-cabinet .mine-scene::before,
+.idle-cabinet .mine-scene::after,
+.idle-cabinet .mine-scene-stars,
+.idle-cabinet .mine-scene-ridge,
+.idle-cabinet .mine-scene-assets {
+  display: none;
 }
 
 .idle-cabinet .mine-scene-stars {
