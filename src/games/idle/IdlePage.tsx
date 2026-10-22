@@ -205,6 +205,7 @@ export function IdlePage() {
         <div id="idle-dashboard" className="idle-cabinet">
           <section className="idle-stage">
             <ClickPad
+              crystals={save.crystals}
               gain={gain}
               tierName={topTier.name}
               sector={unlockedTiers.length}
