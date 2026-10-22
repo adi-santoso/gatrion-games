@@ -1,5 +1,14 @@
 import { formatNumber } from "../../../lib/format";
-import { GENERATORS, bulkCost, wantedCount } from "../economy";
+import {
+  GENERATORS,
+  bulkCost,
+  isUnlocked,
+  milestoneMultiplier,
+  nextMilestone,
+  tierRate,
+  unlockHint,
+  wantedCount,
+} from "../economy";
 import type { IdleSave } from "../types";
 
 interface Props {
@@ -9,12 +18,18 @@ interface Props {
 
 export function ShopList({ save, onBuy }: Props) {
   return (
-    <div id="shop" className="mt-1 divide-y divide-line">
+    <div id="shop" className="tier-grid">
       {GENERATORS.map((generator, index) => {
-        const wanted = wantedCount(save, generator);
+        const unlocked = isUnlocked(save, generator);
+        const owned = save.gens[generator.id] ?? 0;
+        const wanted = unlocked ? wantedCount(save, generator) : 0;
         const quantity = wanted > 0 ? wanted : 1;
-        const cost = bulkCost(generator, save.gens[generator.id] ?? 0, quantity);
-        const affordable = wanted > 0 && cost <= save.crystals;
+        const cost = bulkCost(generator, owned, quantity);
+        const affordable = unlocked && wanted > 0 && cost <= save.crystals;
+        const hint = unlockHint(save, generator);
+        const factor = milestoneMultiplier(owned);
+        const next = nextMilestone(owned);
+        const progress = next ? Math.min(100, (owned / next.at) * 100) : 100;
 
         return (
           <button
@@ -22,26 +37,45 @@ export function ShopList({ save, onBuy }: Props) {
             type="button"
             data-gen={generator.id}
             data-affordable={affordable ? "true" : "false"}
-            className="shop-row flex w-full items-center gap-3 py-3 text-left disabled:cursor-not-allowed"
+            data-unlocked={unlocked ? "true" : "false"}
+            className="tier-card"
             disabled={!affordable}
             onClick={() => onBuy(generator.id)}
           >
-            <span className="mono w-4 shrink-0 text-[10px] text-muted">
-              {String(index + 1).padStart(2, "0")}
+            <span className="tier-head">
+              <span className="tier-index">{String(index + 1).padStart(2, "0")}</span>
+              <span className="tier-name">{unlocked ? generator.name : "Terkunci"}</span>
+              {factor > 1 && (
+                <span data-role="milestone" className="tier-mult">
+                  ×{factor}
+                </span>
+              )}
             </span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-medium">{generator.name}</span>
-              <span className="mono mt-0.5 block text-[10px] text-muted">
-                +{generator.rate}/dtk · x{save.gens[generator.id] ?? 0}
+
+            <span className="tier-meta">
+              {!unlocked ? (
+                hint
+              ) : owned === 0 ? (
+                `+${formatNumber(generator.rate)}/dtk`
+              ) : (
+                <>
+                  <span className="tier-owned">×{owned}</span> · +
+                  {formatNumber(tierRate(save, generator))}/dtk
+                </>
+              )}
+            </span>
+
+            {unlocked && (
+              <span className="tier-foot">
+                <span className="tier-track">
+                  <span style={{ width: `${Math.max(3, progress)}%` }} />
+                </span>
+                <span data-role="cost" className="tier-cost">
+                  {quantity > 1 ? `×${quantity} ` : ""}
+                  {formatNumber(cost)} ✦
+                </span>
               </span>
-            </span>
-            <span
-              data-role="cost"
-              className="mono shrink-0 rounded-md border border-line px-2 py-1 text-[11px]"
-            >
-              {quantity > 1 ? `×${quantity} ` : ""}
-              {formatNumber(cost)} ✦
-            </span>
+            )}
           </button>
         );
       })}

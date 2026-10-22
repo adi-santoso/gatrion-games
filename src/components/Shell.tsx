@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
 
 const NAV = [
   { to: "/wordle", label: "wordle" },
@@ -14,19 +15,22 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="display text-lg">gatrion</span>
           <span className="mono text-[10px] text-muted">/games</span>
         </Link>
-        <nav className="mono flex items-center gap-5 text-[11px] text-muted">
-          {NAV.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                isActive ? "text-ink" : "transition hover:text-ink"
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+        <div className="flex items-center gap-4">
+          <nav className="mono flex items-center gap-5 text-[11px] text-muted">
+            {NAV.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  isActive ? "text-ink" : "transition hover:text-ink"
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+          <ThemeToggle />
+        </div>
       </header>
 
       {children}

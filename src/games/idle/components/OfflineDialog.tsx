@@ -39,7 +39,9 @@ export function OfflineDialog({ report, rate, onClose }: Props) {
           <span className="mono text-[11px] text-muted">kristal</span>
         </div>
         <p className="mono mt-3 text-[10px] leading-relaxed text-muted/70">
-          Dihitung 50% dari laju tambang, dibatasi 8 jam. Tutup dialog untuk lanjut menambang.
+          Dihitung {Math.round(report.efficiency * 100)}% dari laju tambang, dibatasi{" "}
+          {report.capSeconds / 3600} jam. Naikkan lewat riset dan gudang dalam. Tutup dialog untuk
+          lanjut menambang.
         </p>
         <button
           ref={closeRef}

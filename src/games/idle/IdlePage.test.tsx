@@ -9,6 +9,10 @@ function seed(overrides: Record<string, unknown> = {}) {
   localStorage.setItem("gatrion.idle.save", JSON.stringify(save));
 }
 
+function stored() {
+  return JSON.parse(localStorage.getItem("gatrion.idle.save") ?? "{}");
+}
+
 function renderPage() {
   return render(
     <MemoryRouter>
@@ -22,49 +26,122 @@ describe("IdlePage", () => {
     localStorage.clear();
   });
 
-  it("menampilkan kristal dan daftar generator", () => {
+  it("menambang otomatis tanpa klik", () => {
     seed();
     renderPage();
     expect(screen.getByTestId("crystals")).toHaveTextContent("100K");
-    expect(screen.getAllByRole("button", { name: /Pencungkil/ })).toHaveLength(1);
+    expect(screen.getByTestId("rate")).toHaveTextContent("0.5/detik");
+    expect(screen.getByText(/menambang sendiri sejak detik pertama/)).toBeInTheDocument();
   });
 
-  it("klik menambah kristal dan jumlah klik", async () => {
+  it("menampilkan tier terkunci dan hint pembukaannya", () => {
     seed();
     renderPage();
+    const locked = document.querySelector('[data-gen="drill"]');
+    expect(locked).toHaveAttribute("data-unlocked", "false");
+    expect(locked).toHaveTextContent(/butuh 5 Pencungkil/);
+  });
 
-    fireEvent.click(screen.getByRole("button", { name: /Tambang kristal/ }));
+  it("klik tetap memberi bonus manual", async () => {
+    seed({ auto: false });
+    renderPage();
+
+    fireEvent.click(screen.getByRole("button", { name: /Ketuk untuk kristal/ }));
 
     await waitFor(() => {
-      const saved = JSON.parse(localStorage.getItem("gatrion.idle.save") ?? "{}");
-      expect(saved.clicks).toBe(1);
-      expect(saved.crystals).toBeGreaterThan(100_000);
+      expect(stored().clicks).toBe(1);
+      expect(stored().crystals).toBeGreaterThan(100_000);
     });
   });
 
   it("membeli sepuluh unit sekaligus", async () => {
-    seed();
+    seed({ auto: false });
     renderPage();
 
     fireEvent.click(screen.getByRole("button", { name: "x10" }));
-    const row = screen.getByRole("button", { name: /Pencungkil/ });
+    const row = document.querySelector('[data-gen="pick"]') as HTMLButtonElement;
     expect(row).toHaveTextContent("×10");
 
     fireEvent.click(row);
 
     await waitFor(() => {
-      const saved = JSON.parse(localStorage.getItem("gatrion.idle.save") ?? "{}");
-      expect(saved.gens.pick).toBe(10);
-      expect(saved.crystals).toBeLessThan(100_000);
+      expect(stored().gens.pick).toBe(11);
+      expect(stored().crystals).toBeLessThan(100_000);
     });
-    expect(screen.getByRole("button", { name: /Pencungkil/ })).toHaveTextContent("x10");
   });
 
-  it("menampilkan dialog progres offline saat kembali", () => {
+  it("membeli riset dan menaikkan produksi", async () => {
+    seed({ auto: false });
+    renderPage();
+
+    fireEvent.click(screen.getByRole("button", { name: "riset" }));
+
+    const gear = document.querySelector('[data-upgrade="gear"]') as HTMLButtonElement;
+    expect(gear).not.toBeDisabled();
+    fireEvent.click(gear);
+
+    await waitFor(() => {
+      expect(stored().upg.gear).toBe(1);
+      expect(stored().crystals).toBeLessThan(100_000);
+    });
+  });
+
+  it("melakukan peleburan lewat dialog dan menyimpan inti", async () => {
+    seed({ total: 4_000_000, crystals: 4_000_000, auto: false });
+    renderPage();
+
+    const button = document.querySelector('[data-action="prestige"]') as HTMLButtonElement;
+    expect(button).toHaveTextContent("+4");
+    fireEvent.click(button);
+
+    const dialog = screen.getByRole("dialog", { name: "Lebur putaran ini?" });
+    expect(within(dialog).getByTestId("prestige-gain")).toHaveTextContent("+4");
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Lebur sekarang" }));
+
+    await waitFor(() => {
+      expect(stored().cores).toBe(4);
+      expect(stored().prestiges).toBe(1);
+      expect(stored().total).toBe(0);
+      expect(stored().gens.pick).toBe(1);
+    });
+    expect(screen.getByTestId("cores")).toHaveTextContent("4");
+  });
+
+  it("mandor otomatis aktif sejak awal dan membeli generator sendiri", async () => {
+    seed({ crystals: 10_000, auto: true });
+    renderPage();
+
+    await waitFor(
+      () => {
+        expect(stored().gens.pick).toBeGreaterThan(1);
+        expect(stored().autoBuys).toBeGreaterThan(0);
+      },
+      { timeout: 4000 },
+    );
+  });
+
+  it("berpindah tab antara tambang, lebur, dan arsip", () => {
+    seed({ auto: false });
+    renderPage();
+
+    expect(document.querySelector('[data-gen="pick"]')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "lebur" }));
+    expect(document.querySelector('[data-core="spark"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-gen="pick"]')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "arsip" }));
+    expect(screen.getByText("lencana")).toBeInTheDocument();
+    expect(document.querySelector("#achievements")).toBeInTheDocument();
+  });
+
+  it("menampilkan dialog progres offline dengan efisiensi", () => {
     seed({ gens: { pick: 20 }, crystals: 0, total: 0, lastSeen: Date.now() - 3_600_000 });
     renderPage();
     const dialog = screen.getByRole("dialog", { name: "Selamat kembali" });
     expect(dialog).toBeInTheDocument();
-    expect(within(dialog).getByTestId("offline-gain")).toHaveTextContent(/^\+18/);
+    expect(within(dialog).getByTestId("offline-gain")).toHaveTextContent(/^\+36/);
+    expect(dialog).toHaveTextContent(/50% dari laju tambang/);
   });
 });

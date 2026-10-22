@@ -10,10 +10,11 @@ interface Pop {
 
 interface Props {
   gain: number;
+  tierName: string;
   onTap: () => void;
 }
 
-export function ClickPad({ gain, onTap }: Props) {
+export function ClickPad({ gain, tierName, onTap }: Props) {
   const [pops, setPops] = useState<Pop[]>([]);
   const nextId = useRef(0);
 
@@ -34,10 +35,18 @@ export function ClickPad({ gain, onTap }: Props) {
   };
 
   return (
-    <div id="pop-layer" className="relative mt-7 overflow-hidden rounded-[10px]">
-      <button type="button" className="pad" onClick={handleClick}>
-        <span className="mono text-[10px] uppercase tracking-[0.18em] text-muted">tap / klik</span>
-        <span className="display text-xl">Tambang kristal</span>
+    <div id="pop-layer" className="relative mx-auto w-fit">
+      <button
+        type="button"
+        className="core"
+        aria-label={`Ketuk untuk kristal (bonus +${formatNumber(gain)})`}
+        onClick={handleClick}
+      >
+        <span aria-hidden="true" className="core-glyph">
+          ◆
+        </span>
+        <span className="core-tier">{tierName}</span>
+        <span className="core-bonus">+{formatNumber(gain)}</span>
       </button>
       {pops.map((pop) => (
         <span key={pop.id} className="pop-float" style={{ left: pop.x, top: pop.y }}>

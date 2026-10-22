@@ -1,11 +1,22 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>gatrion games</title>
     <meta name="description" content="Wordle dua bahasa dan idle tambang. Dua game browser kecil untuk mengisi jeda kerja." />
-    <meta name="theme-color" content="#0b0c09" />
+    <meta name="theme-color" content="#f6f4ec" />
+    <script>
+      // terapkan tema tersimpan sebelum paint supaya tidak berkedip
+      try {
+        if (localStorage.getItem("gatrion.theme") === "dark") {
+          document.documentElement.dataset.theme = "dark";
+          document.querySelector('meta[name="theme-color"]').setAttribute("content", "#0b0c09");
+        }
+      } catch (error) {
+        /* mode privat: pakai tema terang */
+      }
+    </script>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0c09'/%3E%3Crect x='7' y='7' width='8' height='8' rx='1.5' fill='%23cdf94b'/%3E%3Crect x='17' y='7' width='8' height='8' rx='1.5' fill='%23ece9df' opacity='.25'/%3E%3Crect x='7' y='17' width='8' height='8' rx='1.5' fill='%23ece9df' opacity='.25'/%3E%3Crect x='17' y='17' width='8' height='8' rx='1.5' fill='%23cdf94b' opacity='.5'/%3E%3C/svg%3E"
