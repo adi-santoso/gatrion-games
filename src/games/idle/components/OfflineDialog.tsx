@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { formatDuration, formatNumber } from "../../../lib/format";
+import { MATERIAL_BUILDINGS } from "../economy";
 import type { OfflineReport } from "../types";
 
 interface Props {
@@ -22,6 +23,7 @@ export function OfflineDialog({ report, rate, onClose }: Props) {
   }, [report, onClose]);
 
   if (!report) return null;
+  const materialGains = MATERIAL_BUILDINGS.filter((building) => report.materials[building.id] > 0);
 
   return (
     <div className="dialog-backdrop">
@@ -32,12 +34,23 @@ export function OfflineDialog({ report, rate, onClose }: Props) {
         <p className="mono mt-2 text-[11px] leading-relaxed text-muted">
           Kamu pergi {formatDuration(report.seconds * 1000)} · laju tambang {formatNumber(rate)}/detik
         </p>
-        <div className="mt-4 flex items-baseline gap-2">
-          <span data-testid="offline-gain" className="display text-3xl text-lime">
-            +{formatNumber(report.gain)}
-          </span>
-          <span className="mono text-[11px] text-muted">kristal</span>
-        </div>
+        {report.gain > 0 && (
+          <div className="mt-4 flex items-baseline gap-2">
+            <span data-testid="offline-gain" className="display text-3xl text-lime">
+              +{formatNumber(report.gain)}
+            </span>
+            <span className="mono text-[11px] text-muted">kristal</span>
+          </div>
+        )}
+        {materialGains.length > 0 && (
+          <div className="offline-material-gains" aria-label="Material terkumpul saat offline">
+            {materialGains.map((building) => (
+              <span key={building.id}>
+                +{formatNumber(report.materials[building.id])} {building.materialName}
+              </span>
+            ))}
+          </div>
+        )}
         <p className="mono mt-3 text-[10px] leading-relaxed text-muted/70">
           Dihitung {Math.round(report.efficiency * 100)}% dari laju tambang, dibatasi{" "}
           {report.capSeconds / 3600} jam. Naikkan lewat riset dan gudang dalam. Tutup dialog untuk

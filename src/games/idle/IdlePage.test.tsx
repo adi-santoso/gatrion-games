@@ -86,6 +86,55 @@ describe("IdlePage", () => {
     });
   });
 
+  it("membeli sumber material dan menampilkan hasil produksinya di inventory", async () => {
+    seed({ crystals: 100_000, auto: false });
+    renderPage();
+
+    fireEvent.click(document.querySelector('[data-material-building="wood"]') as HTMLButtonElement);
+    await waitFor(() => expect(stored().materialBuildings.wood).toBe(1));
+    fireEvent.click(screen.getByRole("button", { name: "Inventory" }));
+
+    await waitFor(
+      () => expect(document.querySelector('[data-resource="wood"]')).toHaveTextContent("0.5"),
+      { timeout: 3000 },
+    );
+  });
+
+  it("memakai material untuk upgrade yang mengubah bonus ketukan", async () => {
+    seed({
+      auto: false,
+      materials: { wood: 0, stone: 10, herb: 0 },
+      materialBuildings: { wood: 0, stone: 1, herb: 0 },
+    });
+    renderPage();
+
+    fireEvent.click(screen.getByRole("button", { name: "Inventory" }));
+    fireEvent.click(screen.getByRole("button", { name: "Tingkatkan · 10 Batu" }));
+
+    await waitFor(() => {
+      expect(stored().materialUpgrades.stone).toBe(1);
+      expect(stored().materials.stone).toBe(0);
+    });
+  });
+
+  it("menambahkan hasil material offline ke save dan ringkasan kembali", async () => {
+    seed({
+      auto: false,
+      crystals: 0,
+      total: 0,
+      gens: { pick: 0 },
+      materialBuildings: { wood: 1, stone: 0, herb: 0 },
+      lastSeen: Date.now() - 3_600_000,
+    });
+    renderPage();
+
+    const dialog = screen.getByRole("dialog", { name: "Selamat kembali" });
+    expect(dialog).toHaveTextContent("+900 Kayu");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Lanjut" }));
+    fireEvent.click(screen.getByRole("button", { name: "Inventory" }));
+    expect(document.querySelector('[data-resource="wood"]')).toHaveTextContent("900");
+  });
+
   it("melakukan peleburan lewat dialog dan menyimpan inti", async () => {
     seed({ total: 4_000_000, crystals: 4_000_000, auto: false });
     renderPage();

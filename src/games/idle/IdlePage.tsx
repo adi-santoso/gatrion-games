@@ -8,6 +8,8 @@ import { AchievementsList } from "./components/AchievementsList";
 import { AutoSection } from "./components/AutoSection";
 import { ClickPad } from "./components/ClickPad";
 import { CoreGlyph, CrystalGlyph, FlaskGlyph } from "./components/Glyphs";
+import { MaterialBuildingsPanel } from "./components/MaterialBuildingsPanel";
+import { InventoryPanel } from "./components/InventoryPanel";
 import { OfflineDialog } from "./components/OfflineDialog";
 import { PrestigeDialog } from "./components/PrestigeDialog";
 import { PrestigePanel } from "./components/PrestigePanel";
@@ -17,6 +19,7 @@ import { WorldMapPanel } from "./components/WorldMapPanel";
 import {
   ACHIEVEMENTS,
   GENERATORS,
+  MATERIAL_BUILDINGS,
   clickGain,
   clickUpgradeCost,
   coreGain,
@@ -34,6 +37,8 @@ const BUY_OPTIONS: Array<{ value: BuyAmount; label: string }> = [
   { value: "10", label: "x10" },
   { value: "max", label: "max" },
 ];
+
+const MATERIAL_MARKS = { wood: "♧", stone: "⬟", herb: "❧" } as const;
 
 type TabId = "mine" | "research" | "prestige" | "archive" | "map";
 type DestinationId = "home" | "character" | "inventory" | "upgrade" | "map" | "settings";
@@ -231,6 +236,13 @@ export function IdlePage() {
                   {canPrestige ? `+${formatNumber(pendingCores)}` : "lebur"}
                 </button>
               </span>
+              {MATERIAL_BUILDINGS.filter((building) => save.materialBuildings[building.id] > 0).map((building) => (
+                <span key={building.id} className="idle-chip" data-resource={building.id}>
+                  <span aria-hidden="true">{MATERIAL_MARKS[building.id]}</span>
+                  <strong>{formatNumber(save.materials[building.id])}</strong>
+                  <span>{building.materialName}</span>
+                </span>
+              ))}
               <span className="idle-chip">
                 tier <strong>{unlockedTiers.length}</strong>/{GENERATORS.length}
               </span>
@@ -340,6 +352,7 @@ export function IdlePage() {
                     </div>
                   </div>
                   <ShopList save={save} onBuy={idle.buy} />
+                  <MaterialBuildingsPanel save={save} onBuy={idle.buyMaterialBuilding} />
                 </>
               )}
 
@@ -373,6 +386,7 @@ export function IdlePage() {
 
               {tab === "archive" && (
                 <section id="archive-panel" aria-label="Inventory dan arsip">
+                  <InventoryPanel save={save} onUpgrade={idle.buyMaterialUpgrade} />
                   <div className="panel-head">
                     <span className="panel-title">arsip tambang</span>
                     <span className="mono text-[10px] text-muted">

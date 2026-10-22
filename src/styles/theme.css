@@ -2881,3 +2881,288 @@
     margin-left: 3.8rem;
   }
 }
+
+/* M6 — resource producers and a real material inventory loop. */
+.idle-cabinet .material-buildings {
+  padding-bottom: 0.6rem;
+  border-top: 1px solid rgba(151, 194, 123, 0.14);
+}
+
+.idle-cabinet .material-buildings-heading p,
+.idle-cabinet .inventory-heading p {
+  margin: 0.3rem 0 0;
+  color: #91a189;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.idle-cabinet .material-building-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 0.6rem;
+  padding: 0.15rem 0.75rem 0.8rem;
+}
+
+.idle-cabinet .material-building-card {
+  display: flex;
+  min-width: 0;
+  min-height: 150px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.65rem;
+  border: 1px solid #304230;
+  border-radius: 9px;
+  background: linear-gradient(145deg, rgba(31, 47, 33, 0.91), rgba(17, 27, 19, 0.96));
+  text-align: left;
+}
+
+.idle-cabinet .material-building-card[data-affordable="true"] {
+  border-color: rgba(200, 243, 106, 0.36);
+}
+
+.idle-cabinet .material-building-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.idle-cabinet .material-building-art {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.22);
+  border-radius: 9px;
+  background: rgba(200, 243, 106, 0.06);
+  color: #d9f69f;
+  font-size: 1.45rem;
+}
+
+.idle-cabinet .material-building-name {
+  color: #e1ecd8;
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.idle-cabinet .material-building-meta {
+  color: #98a991;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.idle-cabinet .material-building-purchase {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(151, 194, 123, 0.13);
+  color: #b6c9aa;
+  font-size: 10px;
+}
+
+.idle-cabinet .material-building-card[data-affordable="true"] .material-building-purchase {
+  color: var(--color-lime);
+}
+
+.idle-cabinet .material-building-purchase b {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.idle-cabinet .inventory-overview {
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(151, 194, 123, 0.16);
+}
+
+.idle-cabinet .inventory-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 195px), 1fr));
+  gap: 0.5rem;
+  padding: 0.1rem 0.75rem 0.75rem;
+}
+
+.idle-cabinet .inventory-resource-card {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem;
+  border: 1px solid rgba(151, 194, 123, 0.2);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(31, 47, 33, 0.86), rgba(17, 27, 19, 0.94));
+}
+
+.idle-cabinet .inventory-resource-mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.22);
+  border-radius: 7px;
+  color: #d9f69f;
+  font-size: 1.15rem;
+}
+
+.idle-cabinet .inventory-resource-card > div {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.idle-cabinet .inventory-resource-card strong {
+  color: #e2edd9;
+  font-size: 0.67rem;
+}
+
+.idle-cabinet .inventory-resource-card small {
+  overflow: hidden;
+  color: #91a189;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idle-cabinet .inventory-resource-card > b {
+  flex: 0 0 auto;
+  color: #f0ffdc;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.idle-cabinet .inventory-material-section {
+  padding: 0 0.75rem;
+}
+
+.idle-cabinet .inventory-subheading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.2rem 0 0.55rem;
+}
+
+.idle-cabinet .inventory-subheading > span:last-child {
+  color: #91a189;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.idle-cabinet .inventory-empty-material {
+  margin: 0 0 0.25rem;
+  padding: 0.65rem;
+  border: 1px dashed rgba(151, 194, 123, 0.2);
+  border-radius: 8px;
+  color: #91a189;
+  font-size: 0.64rem;
+  line-height: 1.5;
+}
+
+.idle-cabinet .inventory-upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 0.5rem;
+}
+
+.idle-cabinet .inventory-upgrade-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.6rem;
+  border: 1px solid rgba(151, 194, 123, 0.17);
+  border-radius: 8px;
+  background: rgba(7, 14, 8, 0.26);
+}
+
+.idle-cabinet .inventory-upgrade-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem;
+}
+
+.idle-cabinet .inventory-upgrade-title strong {
+  color: #dce9d3;
+  font-size: 0.66rem;
+}
+
+.idle-cabinet .inventory-upgrade-title span {
+  flex: 0 0 auto;
+  color: #99ad8b;
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+
+.idle-cabinet .inventory-upgrade-card p {
+  min-height: 2.4em;
+  margin: 0;
+  color: #91a189;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+.idle-cabinet .inventory-upgrade-card button {
+  margin-top: auto;
+  padding: 0.36rem 0.45rem;
+  border: 1px solid rgba(200, 243, 106, 0.28);
+  border-radius: 5px;
+  background: rgba(200, 243, 106, 0.06);
+  color: #cbe5b6;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-align: center;
+}
+
+.idle-cabinet .inventory-upgrade-card button:disabled {
+  color: #84907d;
+  cursor: not-allowed;
+}
+
+.idle-cabinet .inventory-upgrade-card button:not(:disabled) {
+  border-color: rgba(200, 243, 106, 0.6);
+  background: linear-gradient(180deg, rgba(104, 159, 50, 0.58), rgba(55, 96, 31, 0.75));
+  color: #f0ffdc;
+}
+
+.offline-material-gains {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+.offline-material-gains span {
+  padding: 0.28rem 0.4rem;
+  border: 1px solid rgba(200, 243, 106, 0.18);
+  border-radius: 5px;
+  color: #d9edc6;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+@media (max-width: 520px) {
+  .idle-cabinet .material-building-grid,
+  .idle-cabinet .inventory-resource-grid,
+  .idle-cabinet .inventory-upgrade-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-inline: 0.55rem;
+  }
+
+  .idle-cabinet .material-building-grid {
+    padding-inline: 0.55rem;
+  }
+
+  .idle-cabinet .inventory-material-section {
+    padding-inline: 0.55rem;
+  }
+}

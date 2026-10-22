@@ -4,6 +4,10 @@ export type UpgradeId = "gear" | "offline";
 
 export type PermId = "spark" | "headstart" | "autobuy" | "vault";
 
+export type MaterialId = "wood" | "stone" | "herb";
+
+export type MaterialBag = Record<MaterialId, number>;
+
 export interface Generator {
   id: string;
   name: string;
@@ -45,10 +49,16 @@ export interface IdleSave {
   auto: boolean;
   /** jumlah unit yang dibeli oleh mandor otomatis (statistik) */
   autoBuys: number;
+  /** Saldo material putaran ini; seluruhnya direset saat peleburan. */
+  materials: MaterialBag;
+  /** Bangunan penghasil material dan upgrade pemakaian material. */
+  materialBuildings: Record<MaterialId, number>;
+  materialUpgrades: Record<MaterialId, number>;
 }
 
 export interface OfflineReport {
   gain: number;
+  materials: MaterialBag;
   seconds: number;
   efficiency: number;
   capSeconds: number;

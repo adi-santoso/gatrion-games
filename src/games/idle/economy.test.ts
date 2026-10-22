@@ -4,6 +4,7 @@ import {
   CORE_UPGRADES,
   GENERATORS,
   MILESTONE_FACTOR,
+  MATERIAL_UPGRADE_MAX,
   OFFLINE_CAP_SECONDS,
   OFFLINE_MIN_SECONDS,
   PRESTIGE_MIN_TOTAL,
@@ -21,6 +22,9 @@ import {
   coreMultiplier,
   coreUpgradeCost,
   defaultSave,
+  materialBuildingCost,
+  materialBuildingRate,
+  materialUpgradeCost,
   globalMultiplier,
   isUnlocked,
   milestoneMultiplier,
@@ -219,6 +223,9 @@ describe("prestise", () => {
       prestiges: 2,
       ach: ["tap1"],
       clicks: 12,
+      materials: { wood: 100, stone: 20, herb: 5 },
+      materialBuildings: { wood: 2, stone: 1, herb: 1 },
+      materialUpgrades: { wood: 1, stone: 2, herb: 3 },
     });
 
     const after = prestige(before, 5000);
@@ -229,6 +236,9 @@ describe("prestise", () => {
     expect(after.allTime).toBe(4_000_000);
     expect(after.upg).toEqual({ gear: 0, offline: 0 });
     expect(after.gens).toEqual(startingGens(before.perm));
+    expect(after.materials).toEqual({ wood: 0, stone: 0, herb: 0 });
+    expect(after.materialBuildings).toEqual({ wood: 0, stone: 0, herb: 0 });
+    expect(after.materialUpgrades).toEqual({ wood: 0, stone: 0, herb: 0 });
     expect(after.perm).toEqual(before.perm);
     expect(after.ach).toEqual(["tap1"]);
     expect(after.clicks).toBe(12);
@@ -272,6 +282,32 @@ describe("progres offline", () => {
   it("tidak memberi apa pun untuk jeda di bawah semenit", () => {
     const save = makeSave({ gens: { pick: 20 }, lastSeen: 0 });
     expect(offlineReport(save, (OFFLINE_MIN_SECONDS - 1) * 1000).gain).toBe(0);
+  });
+
+  it("menghitung produksi material offline dan efek bekal herbal", () => {
+    const save = makeSave({
+      gens: { pick: 20 },
+      materialBuildings: { wood: 2, stone: 1, herb: 0 },
+      materialUpgrades: { wood: 0, stone: 0, herb: 4 },
+      lastSeen: 0,
+    });
+    const report = offlineReport(save, 3_600_000);
+    expect(report.efficiency).toBe(0.7);
+    expect(report.materials.wood).toBeCloseTo(2 * 0.5 * 3600 * 0.7);
+    expect(report.materials.stone).toBeCloseTo(0.2 * 3600 * 0.7);
+    expect(report.materials.herb).toBe(0);
+    expect(offlineEfficiency(makeSave({ upg: { gear: 0, offline: 5 }, materialUpgrades: { wood: 0, stone: 0, herb: MATERIAL_UPGRADE_MAX } }))).toBe(1);
+  });
+});
+
+describe("ekonomi material", () => {
+  it("menghasilkan material dan memberi peningkatan dengan sink nyata", () => {
+    const save = makeSave({ materialBuildings: { wood: 2, stone: 0, herb: 0 } });
+    expect(materialBuildingCost("wood", 0)).toBe(500);
+    expect(materialBuildingRate(save, "wood")).toBe(1);
+    expect(materialUpgradeCost("wood", 0)).toBe(10);
+    expect(globalMultiplier(makeSave({ materialUpgrades: { wood: 2, stone: 0, herb: 0 } }))).toBeCloseTo(1.1);
+    expect(clickGain(makeSave({ materialUpgrades: { wood: 0, stone: 2, herb: 0 } }))).toBeCloseTo(1.313);
   });
 });
 
@@ -327,6 +363,16 @@ describe("sanitizeSave", () => {
     expect(save.cores).toBe(0);
     expect(save.upg).toEqual({ gear: 0, offline: 0 });
     expect(save.ach).toEqual(["offline"]);
+  });
+
+  it("memigrasikan save v3 dengan saldo material aman", () => {
+    const save = sanitizeSave({ v: 3, crystals: 2_500, total: 90_000, gens: { pick: 12 } });
+    expect(save.crystals).toBe(2_500);
+    expect(save.gens.pick).toBe(12);
+    expect(save.materials).toEqual({ wood: 0, stone: 0, herb: 0 });
+    expect(save.materialBuildings).toEqual({ wood: 0, stone: 0, herb: 0 });
+    expect(save.materialUpgrades).toEqual({ wood: 0, stone: 0, herb: 0 });
+    expect(save.v).toBe(SAVE_VERSION);
   });
 
   it("bertahan dari input bukan objek", () => {

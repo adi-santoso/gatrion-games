@@ -103,7 +103,7 @@ Implementasi: panel Peta Dunia menampilkan jalur 10 zona di atas ilustrasi lansk
 
 **Selesai bila:** seluruh wilayah punya pemetaan tier dan tujuan nyata, termasuk pada save lama.
 
-### M6 — Inventory dan ekonomi sumber daya tambahan
+### M6 — Inventory dan ekonomi sumber daya tambahan (selesai)
 
 **Hasil:** putuskan dan implementasikan tingkat kesetiaan mekanik terhadap empat ikon sumber daya di mockup.
 
@@ -111,6 +111,8 @@ Implementasi: panel Peta Dunia menampilkan jalur 10 zona di atas ilustrasi lansk
 - Jika mockup harus menampilkan kayu, batu, dan herbal sebagai mata uang yang dapat dibelanjakan, tambahkan sumber produksi, penggunaan, batas/overflow, dan keseimbangan biaya sebagai fitur ekonomi baru. Jangan sekadar menambahkan tiga counter.
 - Tambahkan field save melalui migrasi dari versi saat ini. Save lama mulai dengan jumlah sumber daya tambahan yang seimbang dan tidak kehilangan kristal, inti, atau generator.
 - Bangunan lama tetap memberi progres selama ekonomi baru diperkenalkan; tidak ada soft-lock yang mengharuskan sumber daya yang belum dapat diproduksi.
+
+Implementasi: versi save naik dari 3 ke 4 dengan default aman kayu/batu/herbal nol; saldo dan progres lama dipertahankan. Kamp Penebang, Tambang Batu, dan Kebun Herbal dibeli memakai kristal dan menghasilkan material secara idle maupun offline. Material dapat dipakai untuk Penopang Kayu (bonus produksi kristal), Mata Bor Batu (bonus ketukan), dan Bekal Herbal (efisiensi offline, dibatasi 100%). Panel Inventory/HUD hanya menampilkan jenis material setelah sumbernya dibangun. Bangunan kristal, riset lama, dan peleburan tetap berjalan tanpa material.
 
 **Masih bisa dimainkan:** semua sumber daya dapat diperoleh dan dipakai dalam loop tertutup; save baru dan save lama dapat terus maju walau pemain belum membuka bangunan tingkat lanjut.
 

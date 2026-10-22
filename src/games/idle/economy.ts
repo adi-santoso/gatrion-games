@@ -2,6 +2,8 @@ import type {
   BuyAmount,
   Generator,
   IdleSave,
+  MaterialBag,
+  MaterialId,
   OfflineReport,
   PermId,
   PermUpgrades,
@@ -9,7 +11,7 @@ import type {
   UpgradeId,
 } from "./types";
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 /** Setiap unit yang sama menaikkan harga 15%. */
 export const GEN_GROWTH = 1.15;
@@ -51,6 +53,81 @@ export const GENERATORS: Generator[] = [
   { id: "city", name: "Kota Kristal", base: 6_000_000_000, rate: 3_400_000 },
   { id: "core", name: "Inti Galaksi", base: 90_000_000_000, rate: 24_000_000 },
 ];
+
+export interface MaterialBuildingDef {
+  id: MaterialId;
+  name: string;
+  materialName: string;
+  baseCost: number;
+  rate: number;
+}
+
+export const MATERIAL_BUILDINGS: MaterialBuildingDef[] = [
+  { id: "wood", name: "Kamp Penebang", materialName: "Kayu", baseCost: 500, rate: 0.5 },
+  { id: "stone", name: "Tambang Batu", materialName: "Batu", baseCost: 5_000, rate: 0.2 },
+  { id: "herb", name: "Kebun Herbal", materialName: "Herbal", baseCost: 15_000, rate: 0.1 },
+];
+
+export const MATERIAL_IDS: MaterialId[] = ["wood", "stone", "herb"];
+export const MATERIAL_UPGRADE_MAX = 10;
+
+export const MATERIAL_UPGRADE_NAMES: Record<MaterialId, string> = {
+  wood: "Penopang Kayu",
+  stone: "Mata Bor Batu",
+  herb: "Bekal Herbal",
+};
+
+export const MATERIAL_UPGRADE_EFFECTS: Record<MaterialId, string> = {
+  wood: "+5% produksi kristal per level",
+  stone: "+15% bonus ketukan per level",
+  herb: "+5% efisiensi offline per level, maksimal 100%",
+};
+
+export function emptyMaterialBag(): MaterialBag {
+  return { wood: 0, stone: 0, herb: 0 };
+}
+
+export function materialBuildingCost(id: MaterialId, owned: number): number {
+  const def = MATERIAL_BUILDINGS.find((building) => building.id === id);
+  return def ? Math.ceil(def.baseCost * Math.pow(1.18, owned)) : Number.POSITIVE_INFINITY;
+}
+
+export function materialBuildingBulkCost(id: MaterialId, owned: number, quantity: number): number {
+  let total = 0;
+  for (let i = 0; i < quantity; i++) total += materialBuildingCost(id, owned + i);
+  return total;
+}
+
+export function materialBuildingAffordableCount(save: IdleSave, id: MaterialId): number {
+  let quantity = 0;
+  let spend = 0;
+  const owned = save.materialBuildings[id] ?? 0;
+  while (quantity < 500) {
+    const next = materialBuildingCost(id, owned + quantity);
+    if (spend + next > save.crystals) break;
+    spend += next;
+    quantity++;
+  }
+  return quantity;
+}
+
+export function materialBuildingRate(save: IdleSave, id: MaterialId): number {
+  const def = MATERIAL_BUILDINGS.find((building) => building.id === id);
+  return def ? (save.materialBuildings[id] ?? 0) * def.rate : 0;
+}
+
+export function materialRates(save: IdleSave): MaterialBag {
+  return {
+    wood: materialBuildingRate(save, "wood"),
+    stone: materialBuildingRate(save, "stone"),
+    herb: materialBuildingRate(save, "herb"),
+  };
+}
+
+export function materialUpgradeCost(id: MaterialId, level: number): number {
+  const base = id === "herb" ? 5 : 10;
+  return Math.ceil(base * Math.pow(1.8, level));
+}
 
 // ---------------------------------------------------------------- upgrades
 
@@ -200,7 +277,7 @@ export function coreMultiplier(save: IdleSave): number {
 
 /** Pengali yang berlaku untuk semua tier. */
 export function globalMultiplier(save: IdleSave): number {
-  return gearMultiplier(save) * sparkMultiplier(save) * coreMultiplier(save);
+  return gearMultiplier(save) * sparkMultiplier(save) * coreMultiplier(save) * (1 + save.materialUpgrades.wood * 0.05);
 }
 
 export function tierRate(save: IdleSave, generator: Generator): number {
@@ -273,7 +350,7 @@ export function clickUpgradeCost(level: number): number {
 }
 
 export function clickGain(save: IdleSave): number {
-  return 1 + save.clickLevel * 3 + production(save) * 0.02;
+  return (1 + save.clickLevel * 3 + production(save) * 0.02) * (1 + save.materialUpgrades.stone * 0.15);
 }
 
 // ---------------------------------------------------------------- prestise
@@ -309,6 +386,9 @@ export function freshRun(save: IdleSave, now = Date.now()): IdleSave {
     perm: save.perm,
     auto: save.auto,
     autoBuys: save.autoBuys,
+    materials: emptyMaterialBag(),
+    materialBuildings: { wood: 0, stone: 0, herb: 0 },
+    materialUpgrades: { wood: 0, stone: 0, herb: 0 },
   };
 }
 
@@ -396,7 +476,7 @@ export function offlineCapAt(vaultLevel: number): number {
 }
 
 export function offlineEfficiency(save: IdleSave): number {
-  return offlineEfficiencyAt(save.upg.offline);
+  return Math.min(1, offlineEfficiencyAt(save.upg.offline) + save.materialUpgrades.herb * 0.05);
 }
 
 export function offlineCapSeconds(save: IdleSave): number {
@@ -408,8 +488,10 @@ export function offlineReport(save: IdleSave, now = Date.now()): OfflineReport {
   const capSeconds = offlineCapSeconds(save);
   const efficiency = offlineEfficiency(save);
   const seconds = Math.min(capSeconds, Math.max(0, (now - save.lastSeen) / 1000));
-  if (seconds < OFFLINE_MIN_SECONDS) return { gain: 0, seconds, efficiency, capSeconds };
-  return { gain: production(save) * seconds * efficiency, seconds, efficiency, capSeconds };
+  const materials = emptyMaterialBag();
+  if (seconds < OFFLINE_MIN_SECONDS) return { gain: 0, materials, seconds, efficiency, capSeconds };
+  for (const id of MATERIAL_IDS) materials[id] = materialBuildingRate(save, id) * seconds * efficiency;
+  return { gain: production(save) * seconds * efficiency, materials, seconds, efficiency, capSeconds };
 }
 
 // ---------------------------------------------------------------- pencapaian
@@ -482,6 +564,9 @@ export function defaultSave(now = Date.now()): IdleSave {
     perm,
     auto: true,
     autoBuys: 0,
+    materials: emptyMaterialBag(),
+    materialBuildings: { wood: 0, stone: 0, herb: 0 },
+    materialUpgrades: { wood: 0, stone: 0, herb: 0 },
   };
 }
 
@@ -534,6 +619,31 @@ export function sanitizeSave(raw: unknown, now = Date.now()): IdleSave {
     ? source.ach.filter((id): id is string => typeof id === "string")
     : [];
 
+  const rawMaterials = typeof source.materials === "object" && source.materials !== null
+    ? source.materials as Record<string, unknown>
+    : {};
+  const rawMaterialBuildings = typeof source.materialBuildings === "object" && source.materialBuildings !== null
+    ? source.materialBuildings as Record<string, unknown>
+    : {};
+  const rawMaterialUpgrades = typeof source.materialUpgrades === "object" && source.materialUpgrades !== null
+    ? source.materialUpgrades as Record<string, unknown>
+    : {};
+  const materials: MaterialBag = {
+    wood: number(rawMaterials.wood),
+    stone: number(rawMaterials.stone),
+    herb: number(rawMaterials.herb),
+  };
+  const materialBuildings: Record<MaterialId, number> = {
+    wood: Math.floor(number(rawMaterialBuildings.wood)),
+    stone: Math.floor(number(rawMaterialBuildings.stone)),
+    herb: Math.floor(number(rawMaterialBuildings.herb)),
+  };
+  const materialUpgrades: Record<MaterialId, number> = {
+    wood: level(rawMaterialUpgrades.wood, MATERIAL_UPGRADE_MAX),
+    stone: level(rawMaterialUpgrades.stone, MATERIAL_UPGRADE_MAX),
+    herb: level(rawMaterialUpgrades.herb, MATERIAL_UPGRADE_MAX),
+  };
+
   const total = number(source.total);
 
   return {
@@ -555,5 +665,8 @@ export function sanitizeSave(raw: unknown, now = Date.now()): IdleSave {
     perm,
     auto: source.auto !== false,
     autoBuys: Math.floor(number(source.autoBuys)),
+    materials,
+    materialBuildings,
+    materialUpgrades,
   };
 }

@@ -71,7 +71,7 @@ Dokumen ini mengunci pemetaan produk dan interaksi untuk mengimplementasikan moc
 
 ## 5. Batas data dan migrasi
 
-- `IdleSave` saat ini versi 3. Milestone yang menambahkan material, misi, atau rekrutmen harus menaikkan versi save dan menambahkan migrasi dari v3; migrasi harus idempotent.
+- `IdleSave` sekarang versi 4 setelah penambahan material. Save v3 dimigrasikan dengan saldo dan bangunan material bernilai nol; progres kristal, inti, generator, riset, dan pencapaian tetap dipertahankan. Milestone misi/rekrutmen berikutnya harus menaikkan versi lagi dan memigrasikan dari versi berjalan.
 - Field UI seperti tab terpilih, panel terbuka, dan item peta yang sedang dipilih tidak disimpan sebagai progres ekonomi.
 - Progres zona dihitung dari tier bila memungkinkan. Resource material, klaim misi harian, serta roster hanya disimpan jika sistem tersebut telah dirilis.
 - Reset peleburan harus menggunakan satu fungsi ekonomi pusat supaya tombol cepat, dialog, dan layar Upgrade tidak menerapkan aturan reset berbeda.
