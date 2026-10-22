@@ -26,6 +26,8 @@
 @layer base {
   :root {
     color-scheme: light;
+    --motion-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-standard: cubic-bezier(0.2, 0, 0, 1);
     --dot: rgba(23, 24, 15, 0.06);
     --overlay: rgba(30, 28, 20, 0.42);
     --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.75) inset, 0 14px 34px rgba(54, 50, 30, 0.09);
@@ -138,8 +140,8 @@
   }
 
   .tile-reveal {
-    animation: flip 0.32s ease both;
-    animation-delay: calc(var(--i, 0) * 110ms);
+    animation: flip 0.44s var(--motion-smooth) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
   }
 
   /* -------------------------------------------------------------- keyboard */
@@ -328,7 +330,7 @@
     font-family: var(--font-mono);
     font-size: 12px;
     pointer-events: none;
-    animation: pop-float 0.8s ease-out forwards;
+    animation: pop-float 0.9s var(--motion-smooth) forwards;
   }
 
   .achv {
@@ -349,6 +351,7 @@
     padding: 1rem;
     background: var(--overlay);
     backdrop-filter: blur(3px);
+    animation: dialog-backdrop-in 0.24s var(--motion-standard) both;
   }
   .dialog {
     width: 100%;
@@ -358,6 +361,7 @@
     background: var(--color-surface);
     padding: 1.25rem;
     box-shadow: var(--shadow-pop);
+    animation: dialog-in 0.3s var(--motion-smooth) both;
   }
 
   .switch {
@@ -410,7 +414,7 @@
     font-family: var(--font-mono);
     font-size: 11px;
     box-shadow: var(--shadow-pop);
-    animation: toast-in 0.18s ease-out;
+    animation: toast-in 0.24s var(--motion-smooth);
     pointer-events: none;
   }
 }
@@ -470,6 +474,16 @@
     opacity: 1;
     transform: translate(-50%, 0);
   }
+}
+
+@keyframes dialog-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1090,7 +1104,7 @@
 .idle-cabinet .tier-card {
   border-color: #2e402f;
   background: linear-gradient(135deg, rgba(40, 57, 41, 0.86), rgba(24, 35, 25, 0.92));
-  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  transition: border-color 200ms var(--motion-standard), background 200ms var(--motion-standard), transform 200ms var(--motion-smooth), box-shadow 220ms var(--motion-standard);
 }
 
 .idle-cabinet .tier-card[data-unlocked="true"]:hover {
@@ -1288,7 +1302,7 @@
   box-shadow: 0 0 0 7px rgba(155, 226, 106, 0.045), 0 12px 35px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   color: #f1ffdf;
   cursor: pointer;
-  transition: transform 140ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  transition: transform 200ms var(--motion-smooth), border-color 200ms var(--motion-standard), box-shadow 240ms var(--motion-standard);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -3664,6 +3678,16 @@
   border-radius: 10px;
   background: linear-gradient(155deg, #17231a, #101810 78%);
   box-shadow: inset 0 1px rgba(237, 249, 225, 0.045), 0 8px 22px rgba(0, 0, 0, 0.12);
+  animation: idle-panel-enter 0.36s var(--motion-smooth) both;
+}
+
+.idle-home-panel:nth-child(2) { animation-delay: 35ms; }
+.idle-home-panel:nth-child(3) { animation-delay: 70ms; }
+.idle-home-panel:nth-child(4) { animation-delay: 105ms; }
+
+@keyframes idle-panel-enter {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .idle-home-panel-heading,
@@ -4265,5 +4289,35 @@
 
   .idle-cabinet .mine-scene-footer {
     width: calc(100% - 2rem);
+  }
+}
+
+/* Keep game interactions on one calm, responsive motion curve. */
+.idle-cabinet *,
+.tile,
+.key,
+.seg button,
+.row-link,
+.pad,
+.shop-row,
+.switch,
+.chip-action,
+.tab-btn {
+  transition-timing-function: var(--motion-standard);
+}
+
+.shake {
+  animation: shake 0.46s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .idle-cabinet *,
+  .dialog-backdrop,
+  .dialog,
+  .tile-reveal,
+  .shake,
+  .toast {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
   }
 }
