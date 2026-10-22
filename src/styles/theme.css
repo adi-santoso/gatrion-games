@@ -2316,3 +2316,121 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* M3 — present existing generators as buildable mine structures. */
+.idle-cabinet .building-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), 1fr));
+  gap: 0.7rem;
+  padding: 0.65rem 0.75rem 1rem;
+}
+
+.idle-cabinet .building-card {
+  min-width: 0;
+  min-height: 224px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.7rem;
+  padding: 0.7rem;
+  border-radius: 11px;
+}
+
+.idle-cabinet .building-card-art {
+  position: relative;
+  display: flex;
+  min-height: 88px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgba(200, 243, 106, 0.1);
+  border-radius: 8px;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(200, 243, 106, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(10, 20, 12, 0.25), rgba(5, 12, 8, 0.55));
+}
+
+.idle-cabinet .building-card .tier-ico {
+  align-items: center;
+  justify-content: center;
+}
+
+.idle-cabinet .building-card .tier-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 12px;
+}
+
+.idle-cabinet .building-card-level {
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.4rem;
+  padding: 0.18rem 0.38rem;
+  border: 1px solid rgba(200, 243, 106, 0.18);
+  border-radius: 5px;
+  background: rgba(9, 17, 11, 0.82);
+  color: #d5edbf;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.idle-cabinet .building-card-body {
+  flex: 1 1 auto;
+  gap: 0.35rem;
+}
+
+.idle-cabinet .building-card .tier-head {
+  justify-content: flex-start;
+}
+
+.idle-cabinet .building-card .tier-name {
+  font-size: 13px;
+}
+
+.idle-cabinet .building-card .tier-meta {
+  min-height: 2.7em;
+}
+
+.idle-cabinet .building-card-foot {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.idle-cabinet .building-card-purchase {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+}
+
+.idle-cabinet .building-card-action {
+  color: #d5edbf;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.idle-cabinet .building-card[data-affordable="true"] .building-card-action {
+  color: var(--color-lime);
+}
+
+.idle-cabinet .building-card[data-unlocked="false"] .building-card-art {
+  filter: saturate(0.35);
+}
+
+@media (max-width: 520px) {
+  .idle-cabinet .building-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    padding-inline: 0.55rem;
+  }
+
+  .idle-cabinet .building-card {
+    min-height: 210px;
+    padding: 0.55rem;
+  }
+
+  .idle-cabinet .building-card .tier-icon {
+    width: 58px;
+    height: 58px;
+  }
+}

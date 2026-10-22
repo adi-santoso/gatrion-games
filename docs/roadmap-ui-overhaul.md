@@ -52,13 +52,13 @@ Mockup menjadi sasaran visual dan susunan informasi. Fondasi permainan tetap idl
 - Susun HUD untuk kristal, laju produksi, inti, tier, dan status mandor. Nilainya berasal langsung dari save dan fungsi ekonomi.
 - Tampilkan aktivitas produksi yang benar-benar aktif serta aksi cepat untuk menuju Bangunan, Riset, dan peleburan.
 - Pertahankan keterbacaan angka, kontrol keyboard/aksesibilitas, dan reduced motion.
-- Implementasi: scene tambang diperlebar dengan kontur lanskap CSS dan ikon generator yang sudah ada; sektor mengikuti jumlah tier terbuka. Rail menampilkan produksi aktual, toggle mandor, efisiensi/batas offline, dan aksi Bangun/Upgrade/Rekrut/Reset. Reset membuka konfirmasi lebur; reset seluruh progres tetap terpisah.
+- Implementasi: scene tambang diperlebar dengan ilustrasi lanskap khusus yang disimpan di `public/images/idle/mine-scene.png`; sektor mengikuti jumlah tier terbuka. Rail menampilkan produksi aktual, toggle mandor, efisiensi/batas offline, dan aksi Bangun/Upgrade/Rekrut/Reset. Reset membuka konfirmasi lebur; reset seluruh progres tetap terpisah.
 
 **Masih bisa dimainkan:** klik memberi bonus, produksi berjalan, HUD berubah, dan aksi cepat membuka kontrol yang benar.
 
 **Selesai bila:** scene tetap ringan dan dapat dipakai di viewport sempit; tidak menutupi fungsi inti atau menampilkan penghitung dekoratif.
 
-### M3 — Bangunan dan loop generator
+### M3 — Bangunan dan loop generator (selesai)
 
 **Hasil:** panel Bangunan menyerupai panel mockup, tetapi generator lama menjadi implementasi ekonominya.
 
@@ -66,6 +66,8 @@ Mockup menjadi sasaran visual dan susunan informasi. Fondasi permainan tetap idl
 - Kelompokkan bangunan ke kategori visual bila membantu navigasi; kategori tidak boleh menyiratkan fungsi produksi yang belum ada.
 - Pertahankan pembelian x1/x10/max, harga deret, milestone produksi, mandor, dan aturan buka tier.
 - Gunakan label yang menjaga tema tambang. Nama seperti kamp, kantor, atau pabrik kayu hanya dipakai jika perilaku dan biaya bangunannya sesuai.
+
+Implementasi: seluruh 10 generator kini ditampilkan sebagai kartu bangunan responsif dengan ilustrasi yang sudah ada, jumlah unit, produksi aktual/per-unit, progres menuju milestone, dan total biaya sesuai mode pembelian. Kartu terkunci menjelaskan syarat buka; biaya, produksi, pembelian otomatis, serta syarat tier tetap memakai ekonomi lama.
 
 **Masih bisa dimainkan:** pemain dapat membeli dan meningkatkan setiap generator yang terbuka; pembelian manual dan otomatis menghasilkan progres yang sama seperti sebelumnya.
 

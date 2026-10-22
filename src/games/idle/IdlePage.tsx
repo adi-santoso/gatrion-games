@@ -306,7 +306,7 @@ export function IdlePage() {
               {tab === "mine" && (
                 <>
                   <div className="panel-head flex-wrap">
-                    <span className="panel-title">generator · beli</span>
+                    <span className="panel-title">bangunan tambang · {GENERATORS.length} tier</span>
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
