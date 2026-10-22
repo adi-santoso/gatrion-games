@@ -1407,3 +1407,115 @@
     animation: none;
   }
 }
+
+
+/* Stage companion panel: frame the live totals like an in-game status console. */
+.idle-cabinet .idle-score {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid rgba(151, 194, 123, 0.2);
+  border-radius: 14px;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(147, 218, 91, 0.08), transparent 48%),
+    linear-gradient(145deg, rgba(31, 47, 33, 0.96), rgba(17, 27, 19, 0.96));
+  box-shadow: inset 0 1px 0 rgba(231, 255, 219, 0.04);
+}
+
+.idle-cabinet .idle-score .display {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+.idle-cabinet .depth {
+  gap: 5px;
+  margin-top: 0.95rem;
+}
+
+.idle-cabinet .depth-seg {
+  min-height: 27px;
+  border-color: rgba(133, 168, 113, 0.16);
+  border-radius: 6px;
+  background: rgba(7, 14, 8, 0.38);
+  color: #879983;
+}
+
+.idle-cabinet .depth-seg[data-on="true"] {
+  border-color: rgba(200, 243, 106, 0.32);
+  background: linear-gradient(180deg, rgba(200, 243, 106, 0.16), rgba(200, 243, 106, 0.04));
+  color: #d9f8bc;
+}
+
+.idle-cabinet .panel-title {
+  color: #c3d6b8;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.idle-cabinet .panel-head {
+  background: rgba(17, 27, 19, 0.55);
+}
+
+.idle-cabinet .tab-bar {
+  border-top: 1px solid rgba(200, 243, 106, 0.12);
+  border-bottom-color: #344a35;
+}
+
+.idle-cabinet .tier-grid {
+  gap: 0.55rem;
+  padding: 0.65rem 0.75rem 0.8rem;
+}
+
+.idle-cabinet .tier-card {
+  min-height: 76px;
+  padding: 0.65rem;
+  border-radius: 10px;
+}
+
+.idle-cabinet .tier-name {
+  color: #e2edd9;
+}
+
+.idle-cabinet .tier-meta {
+  color: #9aaa91;
+}
+
+.idle-cabinet .tier-track {
+  background: rgba(4, 10, 5, 0.5);
+}
+
+.idle-cabinet .tier-track > span {
+  background: linear-gradient(90deg, #77bd4b, #c8f36a);
+  box-shadow: 0 0 8px rgba(200, 243, 106, 0.12);
+}
+
+.idle-cabinet .tier-cost {
+  border-radius: 5px;
+  color: #d5edbf;
+}
+
+.idle-cabinet #auto {
+  border-color: #3b5039;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(200, 243, 106, 0.07), transparent 55%),
+    linear-gradient(135deg, #203023, #172219);
+  box-shadow: inset 0 1px 0 rgba(231, 255, 219, 0.04);
+}
+
+@media (max-width: 639px) {
+  .idle-cabinet .idle-score {
+    padding: 1rem;
+  }
+  .idle-cabinet .tier-grid {
+    gap: 0.45rem;
+    padding-inline: 0.55rem;
+  }
+  .idle-cabinet .tier-card {
+    min-height: 70px;
+    padding: 0.5rem;
+  }
+}
