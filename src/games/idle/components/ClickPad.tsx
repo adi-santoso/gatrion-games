@@ -21,7 +21,7 @@ export function ClickPad({ gain, tierId, tierName, onTap }: Props) {
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     onTap();
-    const rect = event.currentTarget.getBoundingClientRect();
+    const rect = event.currentTarget.parentElement?.getBoundingClientRect() ?? event.currentTarget.getBoundingClientRect();
     const id = nextId.current++;
     const pop: Pop = {
       id,
