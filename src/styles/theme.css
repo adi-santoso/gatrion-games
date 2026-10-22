@@ -1647,7 +1647,7 @@
   display: grid;
   min-height: 100vh;
   grid-template-columns: 218px minmax(0, 1fr);
-  background: var(--color-bg);
+  background: #101710;
 }
 
 .idle-sidebar {
