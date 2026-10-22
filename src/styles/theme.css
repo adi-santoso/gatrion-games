@@ -2434,3 +2434,204 @@
     height: 58px;
   }
 }
+
+/* M4 — make run research and production activity states explicit. */
+.idle-cabinet .research-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 0.7rem;
+  padding: 0.55rem 0.75rem 0.8rem;
+}
+
+.idle-cabinet .research-card {
+  display: flex;
+  min-width: 0;
+  min-height: 205px;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  border: 1px solid #314330;
+  border-radius: 11px;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(200, 243, 106, 0.08), transparent 55%),
+    linear-gradient(145deg, rgba(31, 47, 33, 0.94), rgba(17, 27, 19, 0.98));
+}
+
+.idle-cabinet .research-card-heading {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.idle-cabinet .research-card-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.34);
+  border-radius: 50%;
+  background: rgba(200, 243, 106, 0.06);
+  color: #d9f69f;
+  font-size: 1.3rem;
+}
+
+.idle-cabinet .research-card-title {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.idle-cabinet .research-card-eyebrow {
+  color: #91aa82;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.idle-cabinet .research-card-title h3 {
+  overflow: hidden;
+  margin: 0.18rem 0 0;
+  color: #e4eedb;
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idle-cabinet .research-card-level {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid rgba(151, 194, 123, 0.2);
+  border-radius: 5px;
+  color: #c6d7b9;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.idle-cabinet .research-card-effect {
+  min-height: 2.7em;
+  margin: 0;
+  color: #b6c9aa;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  line-height: 1.55;
+}
+
+.idle-cabinet .research-card-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.idle-cabinet .research-card-progress > span {
+  height: 5px;
+  flex: 1 1 auto;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(4, 10, 5, 0.58);
+}
+
+.idle-cabinet .research-card-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #77bd4b, #c8f36a);
+}
+
+.idle-cabinet .research-card-progress small {
+  color: #91a189;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.idle-cabinet .research-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.idle-cabinet .research-card-scope {
+  color: #869780;
+  font-family: var(--font-mono);
+  font-size: 8px;
+}
+
+.idle-cabinet .research-card-footer button {
+  min-width: 94px;
+  padding: 0.38rem 0.55rem;
+  border: 1px solid rgba(200, 243, 106, 0.25);
+  border-radius: 6px;
+  background: rgba(200, 243, 106, 0.07);
+  color: #d5edbf;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.idle-cabinet .research-card-footer button[data-affordable="true"] {
+  border-color: rgba(200, 243, 106, 0.62);
+  background: linear-gradient(180deg, rgba(104, 159, 50, 0.68), rgba(55, 96, 31, 0.86));
+  color: #f0ffdc;
+}
+
+.idle-cabinet .research-card-footer button:hover:not(:disabled) {
+  border-color: #c8f36a;
+  background-color: rgba(200, 243, 106, 0.16);
+}
+
+.idle-cabinet .research-card-footer button:disabled {
+  cursor: not-allowed;
+  color: #84907d;
+}
+
+.idle-cabinet .research-card[data-maxed="true"] {
+  border-color: rgba(200, 243, 106, 0.3);
+}
+
+.idle-cabinet .research-reset-badge {
+  padding: 0.2rem 0.35rem;
+  border: 1px solid rgba(236, 185, 95, 0.25);
+  border-radius: 5px;
+  color: #d6b77c;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}
+
+.idle-cabinet .research-run-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0 0.75rem 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(151, 194, 123, 0.15);
+  border-radius: 8px;
+  background: rgba(7, 14, 8, 0.3);
+}
+
+.idle-cabinet .research-run-note-mark {
+  display: grid;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.4);
+  border-radius: 50%;
+  color: #c8f36a;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.idle-cabinet .research-run-note p {
+  margin: 0;
+  color: #9eae96;
+  font-size: 0.62rem;
+  line-height: 1.55;
+}
+
+.idle-cabinet .idle-activity-panel #auto p {
+  font-size: 0.59rem;
+}

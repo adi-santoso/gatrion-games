@@ -73,7 +73,7 @@ Implementasi: seluruh 10 generator kini ditampilkan sebagai kartu bangunan respo
 
 **Selesai bila:** seluruh 10 tier lama tetap dapat dicapai dan tidak ada reset atau perubahan diam-diam pada biaya/produksi.
 
-### M4 — Riset dan aktivitas berjalan
+### M4 — Riset dan aktivitas berjalan (selesai)
 
 **Hasil:** panel riset dan daftar aktivitas terasa seperti bagian dari dunia game, bukan panel administrasi terpisah.
 
@@ -81,6 +81,8 @@ Implementasi: seluruh 10 generator kini ditampilkan sebagai kartu bangunan respo
 - Tampilkan mandor sebagai aktivitas berjalan; waktu hanya ditampilkan jika ada timer nyata. Jangan menambah durasi riset palsu untuk mencocokkan screenshot.
 - Pertahankan upgrade permanen inti pada alur peleburan, dengan penjelasan bahwa efeknya bertahan antar putaran.
 - Tampilkan status offline yang berasal dari efisiensi dan batas offline aktual.
+
+Implementasi: dua riset putaran kini berupa kartu teknologi yang menampilkan efek level saat ini/berikutnya dari ekonomi, level dan progres menuju batas, biaya, serta label reset saat lebur. Catatan panel membedakan efek putaran dengan upgrade inti permanen. Panel aktivitas menjelaskan produksi idle, prioritas riset mandor, batas pembelian otomatis, jumlah unit yang dibeli, dan efisiensi/batas offline aktual tanpa membuat timer.
 
 **Masih bisa dimainkan:** riset dapat dibeli, efeknya mengubah produksi/offline, peleburan tetap memberi inti dan upgrade permanen tetap berfungsi.
 

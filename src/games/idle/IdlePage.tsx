@@ -336,13 +336,16 @@ export function IdlePage() {
                       <FlaskGlyph />
                       riset putaran
                     </span>
-                    <span className="mono text-[10px] text-muted">reset saat lebur</span>
+                    <span className="research-reset-badge">HILANG SAAT LEBUR</span>
                   </div>
                   <UpgradesPanel save={save} onBuy={idle.buyRunUpgrade} />
-                  <p className="mono mx-3 mb-3 text-[10px] leading-relaxed text-muted/70">
-                    mandor membeli riset lebih dulu, lalu generator. riset bertahan sampai kamu
-                    melebur putaran ini.
-                  </p>
+                  <div className="research-run-note">
+                    <span className="research-run-note-mark" aria-hidden="true">i</span>
+                    <p>
+                      Efek riset berlaku untuk putaran ini saja. Mandor memprioritaskan riset yang mampu
+                      dibeli sebelum membeli generator; inti dan upgrade di panel Lebur bersifat permanen.
+                    </p>
+                  </div>
                 </>
               )}
 

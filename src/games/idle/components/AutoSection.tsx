@@ -27,8 +27,8 @@ export function AutoSection({ save, onToggle }: Props) {
       </div>
       <p className="mono mt-1.5 text-[10px] leading-relaxed text-muted">
         {save.auto
-          ? `${steps} pembelian tiap 0,5 dtk · ${formatNumber(save.autoBuys)} unit dibeli`
-          : "nonaktif · semua pembelian manual"}
+          ? `prioritas riset, lalu generator · hingga ${steps} pembelian/0,5 dtk · ${formatNumber(save.autoBuys)} unit dibeli`
+          : "mandor nonaktif · pembelian manual; produksi idle tetap berjalan"}
       </p>
     </section>
   );
