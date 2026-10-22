@@ -1828,7 +1828,7 @@
   max-width: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 880px) {
   .idle-layout {
     display: flex;
     flex-direction: column;
@@ -1932,5 +1932,380 @@
 
   .idle-workspace-status {
     font-size: 0.55rem;
+  }
+}
+
+
+/* M2 — make the mine scene the main play surface and surface live actions. */
+.idle-cabinet .idle-stage {
+  grid-template-columns: minmax(0, 1.55fr) minmax(285px, 0.85fr);
+  align-items: stretch;
+  gap: 0.9rem;
+}
+
+.idle-cabinet .mine-scene {
+  min-height: 470px;
+  border-radius: 13px;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(178, 239, 107, 0.2), transparent 34%),
+    radial-gradient(ellipse at 50% 100%, rgba(38, 100, 51, 0.62), transparent 60%),
+    linear-gradient(180deg, #223d2b 0%, #1b3022 48%, #0d1811 100%);
+}
+
+.idle-cabinet .mine-scene-stars {
+  z-index: 0;
+  opacity: 0.42;
+}
+
+.idle-cabinet .mine-scene-ridge {
+  z-index: 1;
+}
+
+.idle-cabinet .mine-scene-ridge-back {
+  height: 54%;
+  background: linear-gradient(180deg, rgba(102, 149, 84, 0.66), rgba(28, 57, 34, 0.97));
+  filter: drop-shadow(0 -8px 22px rgba(159, 231, 108, 0.08));
+}
+
+.idle-cabinet .mine-scene-ridge-front {
+  height: 32%;
+  background: linear-gradient(180deg, #28462b, #0b150e 93%);
+}
+
+.idle-cabinet .mine-scene-assets {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.idle-cabinet .mine-scene-asset {
+  position: absolute;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 17px rgba(0, 0, 0, 0.58));
+  opacity: 0.84;
+  user-select: none;
+}
+
+.idle-cabinet .mine-scene-asset-rig {
+  width: clamp(62px, 15%, 100px);
+  left: 4%;
+  bottom: 11%;
+  transform: rotate(-6deg);
+}
+
+.idle-cabinet .mine-scene-asset-drill {
+  width: clamp(54px, 12%, 82px);
+  right: 4%;
+  bottom: 13%;
+  transform: rotate(7deg);
+}
+
+.idle-cabinet .mine-scene-asset-plant {
+  width: clamp(42px, 9%, 64px);
+  left: 23%;
+  bottom: 7%;
+  opacity: 0.68;
+}
+
+.idle-cabinet .mine-scene-label,
+.idle-cabinet .mine-scene-footer {
+  z-index: 4;
+}
+
+.idle-cabinet .mine-crystal-wrap {
+  z-index: 3;
+}
+
+.idle-info-rail {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 0.7rem;
+}
+
+.idle-cabinet .idle-score {
+  padding: 0.8rem 0.9rem;
+}
+
+.idle-cabinet .idle-score .display {
+  font-size: clamp(1.8rem, 3vw, 2.55rem);
+}
+
+.idle-cabinet .idle-score .depth {
+  margin-top: 0.65rem;
+}
+
+.idle-cabinet .idle-score .depth-seg {
+  min-height: 22px;
+}
+
+.idle-utility-column {
+  display: grid;
+  min-width: 0;
+  gap: 0.7rem;
+}
+
+.idle-activity-panel,
+.idle-quick-panel {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid rgba(151, 194, 123, 0.21);
+  border-radius: 11px;
+  background: linear-gradient(145deg, rgba(27, 40, 30, 0.94), rgba(17, 27, 19, 0.95));
+  box-shadow: inset 0 1px 0 rgba(231, 255, 219, 0.035);
+}
+
+.idle-utility-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.idle-utility-heading h2 {
+  margin: 0;
+  color: #e3edda;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.idle-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #a7c28f;
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+}
+
+.idle-live-indicator i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c8f36a;
+  box-shadow: 0 0 8px rgba(200, 243, 106, 0.55);
+}
+
+.idle-activity-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.58rem;
+  border: 1px solid rgba(151, 194, 123, 0.2);
+  border-radius: 9px;
+  background: rgba(7, 14, 8, 0.34);
+}
+
+.idle-activity-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.38);
+  border-radius: 50%;
+  color: #d9f69f;
+}
+
+.idle-activity-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.idle-activity-copy strong {
+  overflow: hidden;
+  color: #e5efdc;
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idle-activity-copy small {
+  color: #9aaa91;
+  font-size: 0.58rem;
+}
+
+.idle-activity-rate {
+  flex: 0 0 auto;
+  color: #d8f69c;
+  font-family: var(--font-mono);
+  font-size: 0.61rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.idle-activity-panel #auto {
+  margin-top: 0.5rem;
+  padding: 0.55rem;
+  border-color: rgba(151, 194, 123, 0.18);
+  border-radius: 9px;
+  background: rgba(7, 14, 8, 0.24);
+  box-shadow: none;
+}
+
+.idle-activity-panel #auto h2 {
+  color: #dfe9d7;
+  font-size: 0.68rem;
+}
+
+.idle-activity-panel #auto p {
+  font-size: 0.56rem;
+}
+
+.idle-activity-footnote {
+  margin: 0.5rem 0 0;
+  color: #879783;
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  line-height: 1.45;
+}
+
+.idle-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.idle-quick-grid button {
+  display: flex;
+  min-width: 0;
+  min-height: 64px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.15rem;
+  border: 1px solid rgba(151, 194, 123, 0.19);
+  border-radius: 8px;
+  background: rgba(7, 14, 8, 0.35);
+  color: #dbe7d3;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.idle-quick-grid button:hover:not(:disabled) {
+  border-color: rgba(200, 243, 106, 0.48);
+  background: rgba(200, 243, 106, 0.08);
+  color: #eaffbe;
+}
+
+.idle-quick-grid button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.idle-quick-grid button > span {
+  color: #c8f36a;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.idle-quick-grid button > small {
+  overflow: hidden;
+  max-width: 100%;
+  font-size: 0.53rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idle-quick-hint {
+  margin: 0.45rem 0 0;
+  color: #879783;
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  line-height: 1.45;
+}
+
+.idle-save-summary {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.1rem 0.15rem;
+}
+
+.idle-save-summary details {
+  color: #84927f;
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+}
+
+.idle-save-summary summary {
+  cursor: pointer;
+}
+
+.idle-save-summary details button {
+  margin-top: 0.3rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid rgba(255, 138, 114, 0.32);
+  border-radius: 5px;
+  background: rgba(255, 138, 114, 0.07);
+  color: #ffb19e;
+  cursor: pointer;
+}
+
+@media (max-width: 880px) {
+  .idle-cabinet .idle-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .idle-info-rail {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .idle-cabinet .idle-score {
+    grid-column: 1 / -1;
+  }
+
+  .idle-utility-column {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .idle-save-summary {
+    grid-column: 1 / -1;
+  }
+
+  .idle-cabinet .mine-scene {
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 760px) {
+  .idle-cabinet .mine-scene {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 520px) {
+  .idle-info-rail,
+  .idle-utility-column {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .idle-utility-column,
+  .idle-save-summary {
+    grid-column: 1;
+  }
+
+  .idle-cabinet .mine-scene {
+    min-height: 270px;
+  }
+
+  .idle-quick-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

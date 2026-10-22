@@ -44,7 +44,7 @@ Mockup menjadi sasaran visual dan susunan informasi. Fondasi permainan tetap idl
 
 **Selesai bila:** tidak ada navigasi mati; semua fitur lama dapat ditemukan dan dipakai di desktop maupun mobile.
 
-### M2 — Layar utama tambang dan HUD
+### M2 — Layar utama tambang dan HUD (selesai)
 
 **Hasil:** area tambang menjadi fokus visual seperti area dunia pada mockup, dengan status dan aksi utama yang terbaca sekilas.
 
@@ -52,6 +52,7 @@ Mockup menjadi sasaran visual dan susunan informasi. Fondasi permainan tetap idl
 - Susun HUD untuk kristal, laju produksi, inti, tier, dan status mandor. Nilainya berasal langsung dari save dan fungsi ekonomi.
 - Tampilkan aktivitas produksi yang benar-benar aktif serta aksi cepat untuk menuju Bangunan, Riset, dan peleburan.
 - Pertahankan keterbacaan angka, kontrol keyboard/aksesibilitas, dan reduced motion.
+- Implementasi: scene tambang diperlebar dengan kontur lanskap CSS dan ikon generator yang sudah ada; sektor mengikuti jumlah tier terbuka. Rail menampilkan produksi aktual, toggle mandor, efisiensi/batas offline, dan aksi Bangun/Upgrade/Rekrut/Reset. Reset membuka konfirmasi lebur; reset seluruh progres tetap terpisah.
 
 **Masih bisa dimainkan:** klik memberi bonus, produksi berjalan, HUD berubah, dan aksi cepat membuka kontrol yang benar.
 

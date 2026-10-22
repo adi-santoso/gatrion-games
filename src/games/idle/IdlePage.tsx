@@ -64,6 +64,14 @@ export function IdlePage() {
   const [destination, setDestination] = useState<DestinationId>("home");
   const [settingsOpen, setSettingsOpen] = useState(false);
 
+  const scrollTo = (targetId: string) => {
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => {
+        document.getElementById(targetId)?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+      });
+    }
+  };
+
   const navigateTo = (next: DestinationId) => {
     setDestination(next);
     if (next === "settings") {
@@ -83,17 +91,22 @@ export function IdlePage() {
       upgrade: "idle-panel",
       map: "depth-map",
     }[next];
-    if (typeof window.requestAnimationFrame === "function") {
-      window.requestAnimationFrame(() => {
-        document.getElementById(targetId)?.scrollIntoView?.({ behavior: "smooth", block: "center" });
-      });
-    }
+    scrollTo(targetId);
   };
 
   const setPanelTab = (next: TabId) => {
     setTab(next);
     setSettingsOpen(false);
     setDestination(next === "archive" ? "inventory" : next === "mine" ? "home" : "upgrade");
+  };
+
+  const runQuickAction = (action: "build" | "upgrade" | "recruit") => {
+    if (action === "build") {
+      setPanelTab("mine");
+      scrollTo("idle-panel");
+    }
+    if (action === "upgrade") navigateTo("upgrade");
+    if (action === "recruit") navigateTo("character");
   };
 
   const rate = production(save);
@@ -179,7 +192,7 @@ export function IdlePage() {
               <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink">
                 tambang kristal
               </span>
-              <span className="mono text-[9px] text-muted">sektor 01</span>
+              <span className="mono text-[9px] text-muted">sektor {String(unlockedTiers.length).padStart(2, "0")}</span>
             </div>
 
             <div className="idle-hud">
@@ -219,10 +232,12 @@ export function IdlePage() {
               gain={gain}
               tierId={topTier.id}
               tierName={topTier.name}
+              sector={unlockedTiers.length}
               onTap={idle.tap}
             />
 
-            <div className="idle-score">
+            <div className="idle-info-rail">
+              <div className="idle-score">
               <div className="flex items-center justify-between gap-3">
                 <span className="panel-title flex items-center gap-1.5">
                   <CrystalGlyph />
@@ -259,6 +274,17 @@ export function IdlePage() {
                 <span>Produksi tetap berjalan saat kamu pergi.</span>
                 <span className="text-muted/70">ketuk inti = bonus, tidak wajib</span>
               </div>
+              </div>
+              <IdleUtilityRail
+                save={save}
+                rate={rate}
+                canPrestige={canPrestige}
+                saveStatus={idle.saveStatus}
+                onToggleAuto={idle.setAuto}
+                onQuickAction={runQuickAction}
+                onResetRun={() => setPrestigeOpen(true)}
+                onResetAll={idle.reset}
+              />
             </div>
           </section>
 
@@ -276,8 +302,7 @@ export function IdlePage() {
             ))}
           </div>
 
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_264px]">
-            <div id="idle-panel" className="min-w-0 py-1">
+          <div id="idle-panel" className="min-w-0 py-1">
               {tab === "mine" && (
                 <>
                   <div className="panel-head flex-wrap">
@@ -352,28 +377,6 @@ export function IdlePage() {
                   <AchievementsList save={save} />
                 </section>
               )}
-            </div>
-
-            <aside className="space-y-3 border-t border-line px-3 py-3 lg:border-l lg:border-t-0">
-              <AutoSection save={save} onToggle={idle.setAuto} />
-
-              <p className="mono text-[10px] leading-relaxed text-muted/70">
-                tersimpan tiap 3 detik · saat ditinggal tetap jalan{" "}
-                {Math.round(offlineEfficiency(save) * 100)}% laju, maksimal{" "}
-                {offlineCapSeconds(save) / 3600} jam
-              </p>
-
-              <div className="flex items-center justify-between gap-3">
-                <span className="mono text-[9px] text-muted/70">{idle.saveStatus}</span>
-                <button
-                  type="button"
-                  className="mono text-[10px] text-muted/60 transition hover:text-danger"
-                  onClick={idle.reset}
-                >
-                  reset
-                </button>
-              </div>
-            </aside>
           </div>
         </div>
         </main>
@@ -421,6 +424,95 @@ function StatTile({ label, value }: { label: string; value: string }) {
     <div className="stat-tile">
       <div className="stat-tile-value">{value}</div>
       <div className="stat-tile-label">{label}</div>
+    </div>
+  );
+}
+
+type QuickActionId = "build" | "upgrade" | "recruit";
+
+interface IdleUtilityRailProps {
+  save: IdleSave;
+  rate: number;
+  canPrestige: boolean;
+  saveStatus: string;
+  onToggleAuto: (enabled: boolean) => void;
+  onQuickAction: (action: QuickActionId) => void;
+  onResetRun: () => void;
+  onResetAll: () => void;
+}
+
+function IdleUtilityRail({
+  save,
+  rate,
+  canPrestige,
+  saveStatus,
+  onToggleAuto,
+  onQuickAction,
+  onResetRun,
+  onResetAll,
+}: IdleUtilityRailProps) {
+  return (
+    <div className="idle-utility-column">
+      <section className="idle-activity-panel" aria-labelledby="idle-activity-title">
+        <div className="idle-utility-heading">
+          <h2 id="idle-activity-title">Aktivitas Berjalan</h2>
+          <span className="idle-live-indicator"><i aria-hidden="true" /> LIVE</span>
+        </div>
+
+        <div className="idle-activity-row">
+          <span className="idle-activity-icon" aria-hidden="true"><CrystalGlyph /></span>
+          <span className="idle-activity-copy">
+            <strong>Penambangan Kristal</strong>
+            <small>{rate > 0 ? "Produksi otomatis" : "Belum ada produksi"}</small>
+          </span>
+          <span className="idle-activity-rate">+{formatNumber(rate)}/dtk</span>
+        </div>
+
+        <AutoSection save={save} onToggle={onToggleAuto} />
+
+        <p className="idle-activity-footnote">
+          Offline: {Math.round(offlineEfficiency(save) * 100)}% laju · maksimal {offlineCapSeconds(save) / 3600} jam
+        </p>
+      </section>
+
+      <section className="idle-quick-panel" aria-labelledby="idle-quick-title">
+        <div className="idle-utility-heading">
+          <h2 id="idle-quick-title">Quick Actions</h2>
+        </div>
+        <div className="idle-quick-grid">
+          <button type="button" onClick={() => onQuickAction("build")}>
+            <span aria-hidden="true">▧</span>
+            <small>Bangun</small>
+          </button>
+          <button type="button" onClick={() => onQuickAction("upgrade")}>
+            <span aria-hidden="true">↟</span>
+            <small>Upgrade</small>
+          </button>
+          <button type="button" onClick={() => onQuickAction("recruit")}>
+            <span aria-hidden="true">♙</span>
+            <small>Rekrut</small>
+          </button>
+          <button
+            type="button"
+            disabled={!canPrestige}
+            aria-label={canPrestige ? "Reset putaran melalui peleburan" : "Reset tersedia setelah total satu juta kristal"}
+            title={canPrestige ? "Lebur putaran dan dapatkan inti permanen" : "Butuh total 1 juta kristal dalam satu putaran"}
+            onClick={onResetRun}
+          >
+            <span aria-hidden="true">↻</span>
+            <small>Reset</small>
+          </button>
+        </div>
+        <p className="idle-quick-hint">Reset menjalankan peleburan dan meminta konfirmasi.</p>
+      </section>
+
+      <div className="idle-save-summary">
+        <span className="mono text-[9px] text-muted/70">{saveStatus}</span>
+        <details>
+          <summary>Reset seluruh progres</summary>
+          <button type="button" onClick={onResetAll}>Reset total</button>
+        </details>
+      </div>
     </div>
   );
 }

@@ -12,10 +12,11 @@ interface Props {
   gain: number;
   tierId: string;
   tierName: string;
+  sector: number;
   onTap: () => void;
 }
 
-export function ClickPad({ gain, tierId, tierName, onTap }: Props) {
+export function ClickPad({ gain, tierId, tierName, sector, onTap }: Props) {
   const [pops, setPops] = useState<Pop[]>([]);
   const nextId = useRef(0);
 
@@ -36,13 +37,18 @@ export function ClickPad({ gain, tierId, tierName, onTap }: Props) {
   };
 
   return (
-    <div className="mine-scene" aria-label="Area tambang kristal">
+    <div className="mine-scene" role="group" aria-label={`Area tambang kristal, sektor ${sector}`}>
       <div className="mine-scene-stars" aria-hidden="true" />
       <div className="mine-scene-ridge mine-scene-ridge-back" aria-hidden="true" />
       <div className="mine-scene-ridge mine-scene-ridge-front" aria-hidden="true" />
+      <div className="mine-scene-assets" aria-hidden="true">
+        <img className="mine-scene-asset mine-scene-asset-rig" src="/icons/idle/rig.png" alt="" width="88" height="88" />
+        <img className="mine-scene-asset mine-scene-asset-drill" src="/icons/idle/drill.png" alt="" width="72" height="72" />
+        <img className="mine-scene-asset mine-scene-asset-plant" src="/icons/idle/plant.png" alt="" width="58" height="58" />
+      </div>
       <div className="mine-scene-label">
         <span className="mine-scene-live"><span /> AREA TAMBANG</span>
-        <span className="mine-scene-sector">SEKTOR 01 · KEDALAMAN AKTIF</span>
+        <span className="mine-scene-sector">SEKTOR {String(sector).padStart(2, "0")} · {tierName.toUpperCase()}</span>
       </div>
       <div id="pop-layer" className="mine-crystal-wrap">
         <span className="mine-orbit mine-orbit-one" aria-hidden="true" />
