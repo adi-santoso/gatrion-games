@@ -6,7 +6,9 @@ import { Toast } from "../../components/Toast";
 import { formatDuration, formatNumber } from "../../lib/format";
 import { AchievementsList } from "./components/AchievementsList";
 import { AutoSection } from "./components/AutoSection";
+import { CharacterPanel } from "./components/CharacterPanel";
 import { ClickPad } from "./components/ClickPad";
+import { DailyMissionsPanel } from "./components/DailyMissionsPanel";
 import { CoreGlyph, CrystalGlyph, FlaskGlyph } from "./components/Glyphs";
 import { MaterialBuildingsPanel } from "./components/MaterialBuildingsPanel";
 import { InventoryPanel } from "./components/InventoryPanel";
@@ -30,7 +32,7 @@ import {
   unlockHint,
 } from "./economy";
 import { useIdleGame } from "./useIdleGame";
-import type { BuyAmount, IdleSave } from "./types";
+import type { BuyAmount, DailyMissionId, IdleSave } from "./types";
 
 const BUY_OPTIONS: Array<{ value: BuyAmount; label: string }> = [
   { value: "1", label: "x1" },
@@ -40,7 +42,7 @@ const BUY_OPTIONS: Array<{ value: BuyAmount; label: string }> = [
 
 const MATERIAL_MARKS = { wood: "♧", stone: "⬟", herb: "❧" } as const;
 
-type TabId = "mine" | "research" | "prestige" | "archive" | "map";
+type TabId = "mine" | "research" | "prestige" | "archive" | "map" | "character";
 type DestinationId = "home" | "character" | "inventory" | "upgrade" | "map" | "settings";
 
 const DESTINATIONS: Array<{
@@ -57,6 +59,7 @@ const DESTINATIONS: Array<{
 
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: "mine", label: "tambang" },
+  { id: "character", label: "kru" },
   { id: "research", label: "riset" },
   { id: "map", label: "peta" },
   { id: "prestige", label: "lebur" },
@@ -89,12 +92,13 @@ export function IdlePage() {
     setSettingsOpen(false);
     if (next === "inventory") setTab("archive");
     if (next === "upgrade") setTab("research");
-    if (next === "home" || next === "character") setTab("mine");
+    if (next === "home") setTab("mine");
+    if (next === "character") setTab("character");
     if (next === "map") setTab("map");
 
     const targetId = {
       home: "idle-dashboard",
-      character: "auto",
+      character: "character-panel",
       inventory: "archive-panel",
       upgrade: "idle-panel",
       map: "world-map",
@@ -105,7 +109,7 @@ export function IdlePage() {
   const setPanelTab = (next: TabId) => {
     setTab(next);
     setSettingsOpen(false);
-    setDestination(next === "archive" ? "inventory" : next === "mine" ? "home" : next === "map" ? "map" : "upgrade");
+    setDestination(next === "archive" ? "inventory" : next === "mine" ? "home" : next === "map" ? "map" : next === "character" ? "character" : "upgrade");
   };
 
   const enterMapZone = (generatorId: string) => {
@@ -307,6 +311,7 @@ export function IdlePage() {
                 canPrestige={canPrestige}
                 saveStatus={idle.saveStatus}
                 onToggleAuto={idle.setAuto}
+                onClaimMission={idle.claimDailyMission}
                 onQuickAction={runQuickAction}
                 onResetRun={() => setPrestigeOpen(true)}
                 onResetAll={idle.reset}
@@ -374,6 +379,10 @@ export function IdlePage() {
                     </p>
                   </div>
                 </>
+              )}
+
+              {tab === "character" && (
+                <CharacterPanel save={save} onRecruit={idle.recruit} onToggleAuto={idle.setAuto} />
               )}
 
               {tab === "prestige" && (
@@ -471,6 +480,7 @@ interface IdleUtilityRailProps {
   canPrestige: boolean;
   saveStatus: string;
   onToggleAuto: (enabled: boolean) => void;
+  onClaimMission: (id: DailyMissionId) => void;
   onQuickAction: (action: QuickActionId) => void;
   onResetRun: () => void;
   onResetAll: () => void;
@@ -482,6 +492,7 @@ function IdleUtilityRail({
   canPrestige,
   saveStatus,
   onToggleAuto,
+  onClaimMission,
   onQuickAction,
   onResetRun,
   onResetAll,
@@ -509,6 +520,8 @@ function IdleUtilityRail({
           Offline: {Math.round(offlineEfficiency(save) * 100)}% laju · maksimal {offlineCapSeconds(save) / 3600} jam
         </p>
       </section>
+
+      <DailyMissionsPanel save={save} onClaim={onClaimMission} />
 
       <section className="idle-quick-panel" aria-labelledby="idle-quick-title">
         <div className="idle-utility-heading">

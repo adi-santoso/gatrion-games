@@ -71,7 +71,7 @@ Dokumen ini mengunci pemetaan produk dan interaksi untuk mengimplementasikan moc
 
 ## 5. Batas data dan migrasi
 
-- `IdleSave` sekarang versi 4 setelah penambahan material. Save v3 dimigrasikan dengan saldo dan bangunan material bernilai nol; progres kristal, inti, generator, riset, dan pencapaian tetap dipertahankan. Milestone misi/rekrutmen berikutnya harus menaikkan versi lagi dan memigrasikan dari versi berjalan.
+- `IdleSave` sekarang versi 5 setelah penambahan material, misi harian, dan kru. Save v4 mendapat progres misi hari ini yang kosong dan kru kosong; saldo material, kristal, inti, generator, riset, dan pencapaian tetap dipertahankan. Save lama v3 juga tetap dimigrasikan.
 - Field UI seperti tab terpilih, panel terbuka, dan item peta yang sedang dipilih tidak disimpan sebagai progres ekonomi.
 - Progres zona dihitung dari tier bila memungkinkan. Resource material, klaim misi harian, serta roster hanya disimpan jika sistem tersebut telah dirilis.
 - Reset peleburan harus menggunakan satu fungsi ekonomi pusat supaya tombol cepat, dialog, dan layar Upgrade tidak menerapkan aturan reset berbeda.
@@ -85,7 +85,7 @@ Dokumen ini mengunci pemetaan produk dan interaksi untuk mengimplementasikan moc
 4. M4: integrasikan riset, mandor, peleburan, dan status offline ke panel mockup.
 5. M5: peta zona turunan dari 10 tier.
 6. M6: inventory terlebih dahulu untuk state yang sudah ada, lalu material kayu/batu/herbal beserta sumber dan sink sebagai ekspansi ekonomi.
-7. M7: misi harian dan perekrutan setelah skema save dan aturan hadiah/efek jelas.
+7. M7: misi harian dan perekrutan setelah skema save dan aturan hadiah/efek jelas. Selesai: tiga misi (kristal, ketukan, pembangunan) memakai tanggal kalender lokal dan klaim sekali per hari; hadiahnya menambah saldo tanpa menggandakan statistik produksi. Tiga kru dibeli dengan kayu/batu/herbal, memberi efek putaran, dan direset saat lebur.
 8. M8: penyelarasan visual dan pemeriksaan regresi akhir.
 
 ## 7. Kriteria penerimaan M0

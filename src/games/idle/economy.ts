@@ -4,14 +4,17 @@ import type {
   IdleSave,
   MaterialBag,
   MaterialId,
+  DailyMissionId,
+  DailyMissionState,
   OfflineReport,
   PermId,
   PermUpgrades,
+  RecruitId,
   RunUpgrades,
   UpgradeId,
 } from "./types";
 
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 /** Setiap unit yang sama menaikkan harga 15%. */
 export const GEN_GROWTH = 1.15;
@@ -82,6 +85,59 @@ export const MATERIAL_UPGRADE_EFFECTS: Record<MaterialId, string> = {
   stone: "+15% bonus ketukan per level",
   herb: "+5% efisiensi offline per level, maksimal 100%",
 };
+
+export interface DailyMissionDef {
+  id: DailyMissionId;
+  name: string;
+  target: number;
+  reward: number;
+}
+
+export const DAILY_MISSIONS: DailyMissionDef[] = [
+  { id: "crystals", name: "Tambang kristal", target: 500, reward: 250 },
+  { id: "taps", name: "Ketuk inti tambang", target: 10, reward: 200 },
+  { id: "buildings", name: "Bangun struktur", target: 3, reward: 500 },
+];
+
+export interface RecruitDef {
+  id: RecruitId;
+  name: string;
+  role: string;
+  cost: Partial<MaterialBag>;
+  effect: string;
+}
+
+export const RECRUITS: RecruitDef[] = [
+  { id: "engineer", name: "Raka si Insinyur", role: "Teknisi", cost: { wood: 30 }, effect: "+1 pembelian otomatis tiap 0,5 detik" },
+  { id: "geologist", name: "Sari sang Geolog", role: "Ahli Kristal", cost: { stone: 25 }, effect: "+10% produksi kristal" },
+  { id: "herbalist", name: "Mira sang Peracik", role: "Ahli Herbal", cost: { herb: 20 }, effect: "+10% efisiensi progres offline" },
+];
+
+export function localDateKey(now = Date.now()): string {
+  const date = new Date(now);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+export function defaultDailyMissionState(now = Date.now()): DailyMissionState {
+  return { date: localDateKey(now), progress: { crystals: 0, taps: 0, buildings: 0 }, claimed: [] };
+}
+
+export function ensureDailyMissionDate(save: IdleSave, now = Date.now()): IdleSave {
+  if (save.dailyMissions.date === localDateKey(now)) return save;
+  return { ...save, dailyMissions: defaultDailyMissionState(now) };
+}
+
+export function addDailyMissionProgress(save: IdleSave, id: DailyMissionId, amount: number, now = Date.now()): IdleSave {
+  const current = ensureDailyMissionDate(save, now);
+  if (amount <= 0) return current;
+  return {
+    ...current,
+    dailyMissions: {
+      ...current.dailyMissions,
+      progress: { ...current.dailyMissions.progress, [id]: current.dailyMissions.progress[id] + amount },
+    },
+  };
+}
 
 export function emptyMaterialBag(): MaterialBag {
   return { wood: 0, stone: 0, herb: 0 };
@@ -277,7 +333,7 @@ export function coreMultiplier(save: IdleSave): number {
 
 /** Pengali yang berlaku untuk semua tier. */
 export function globalMultiplier(save: IdleSave): number {
-  return gearMultiplier(save) * sparkMultiplier(save) * coreMultiplier(save) * (1 + save.materialUpgrades.wood * 0.05);
+  return gearMultiplier(save) * sparkMultiplier(save) * coreMultiplier(save) * (1 + save.materialUpgrades.wood * 0.05) * (save.crew.geologist ? 1.1 : 1);
 }
 
 export function tierRate(save: IdleSave, generator: Generator): number {
@@ -389,6 +445,8 @@ export function freshRun(save: IdleSave, now = Date.now()): IdleSave {
     materials: emptyMaterialBag(),
     materialBuildings: { wood: 0, stone: 0, herb: 0 },
     materialUpgrades: { wood: 0, stone: 0, herb: 0 },
+    dailyMissions: save.dailyMissions,
+    crew: { engineer: false, geologist: false, herbalist: false },
   };
 }
 
@@ -408,7 +466,7 @@ export function prestige(save: IdleSave, now = Date.now()): IdleSave {
 
 /** Berapa unit yang dibeli mandor setiap 0,5 detik. */
 export function autoBuysPerTick(save: IdleSave): number {
-  return AUTO_BUYS_PER_TICK + save.perm.autobuy;
+  return AUTO_BUYS_PER_TICK + save.perm.autobuy + (save.crew.engineer ? 1 : 0);
 }
 
 /**
@@ -476,7 +534,7 @@ export function offlineCapAt(vaultLevel: number): number {
 }
 
 export function offlineEfficiency(save: IdleSave): number {
-  return Math.min(1, offlineEfficiencyAt(save.upg.offline) + save.materialUpgrades.herb * 0.05);
+  return Math.min(1, offlineEfficiencyAt(save.upg.offline) + save.materialUpgrades.herb * 0.05 + (save.crew.herbalist ? 0.1 : 0));
 }
 
 export function offlineCapSeconds(save: IdleSave): number {
@@ -567,6 +625,8 @@ export function defaultSave(now = Date.now()): IdleSave {
     materials: emptyMaterialBag(),
     materialBuildings: { wood: 0, stone: 0, herb: 0 },
     materialUpgrades: { wood: 0, stone: 0, herb: 0 },
+    dailyMissions: defaultDailyMissionState(now),
+    crew: { engineer: false, geologist: false, herbalist: false },
   };
 }
 
@@ -628,6 +688,15 @@ export function sanitizeSave(raw: unknown, now = Date.now()): IdleSave {
   const rawMaterialUpgrades = typeof source.materialUpgrades === "object" && source.materialUpgrades !== null
     ? source.materialUpgrades as Record<string, unknown>
     : {};
+  const rawDailyMissions = typeof source.dailyMissions === "object" && source.dailyMissions !== null
+    ? source.dailyMissions as Record<string, unknown>
+    : {};
+  const rawDailyProgress = typeof rawDailyMissions.progress === "object" && rawDailyMissions.progress !== null
+    ? rawDailyMissions.progress as Record<string, unknown>
+    : {};
+  const rawCrew = typeof source.crew === "object" && source.crew !== null
+    ? source.crew as Record<string, unknown>
+    : {};
   const materials: MaterialBag = {
     wood: number(rawMaterials.wood),
     stone: number(rawMaterials.stone),
@@ -642,6 +711,23 @@ export function sanitizeSave(raw: unknown, now = Date.now()): IdleSave {
     wood: level(rawMaterialUpgrades.wood, MATERIAL_UPGRADE_MAX),
     stone: level(rawMaterialUpgrades.stone, MATERIAL_UPGRADE_MAX),
     herb: level(rawMaterialUpgrades.herb, MATERIAL_UPGRADE_MAX),
+  };
+  const dailyDefaults = defaultDailyMissionState(now);
+  const dailyMissions: DailyMissionState = {
+    date: typeof rawDailyMissions.date === "string" ? rawDailyMissions.date : dailyDefaults.date,
+    progress: {
+      crystals: number(rawDailyProgress.crystals),
+      taps: number(rawDailyProgress.taps),
+      buildings: number(rawDailyProgress.buildings),
+    },
+    claimed: Array.isArray(rawDailyMissions.claimed)
+      ? rawDailyMissions.claimed.filter((id): id is DailyMissionId => DAILY_MISSIONS.some((mission) => mission.id === id))
+      : [],
+  };
+  const crew: Record<RecruitId, boolean> = {
+    engineer: rawCrew.engineer === true,
+    geologist: rawCrew.geologist === true,
+    herbalist: rawCrew.herbalist === true,
   };
 
   const total = number(source.total);
@@ -668,5 +754,7 @@ export function sanitizeSave(raw: unknown, now = Date.now()): IdleSave {
     materials,
     materialBuildings,
     materialUpgrades,
+    dailyMissions,
+    crew,
   };
 }

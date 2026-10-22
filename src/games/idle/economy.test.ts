@@ -22,6 +22,8 @@ import {
   coreMultiplier,
   coreUpgradeCost,
   defaultSave,
+  defaultDailyMissionState,
+  ensureDailyMissionDate,
   materialBuildingCost,
   materialBuildingRate,
   materialUpgradeCost,
@@ -57,6 +59,26 @@ describe("default save", () => {
     expect(production(save)).toBeGreaterThan(0);
     expect(save.auto).toBe(true);
     expect(save.v).toBe(SAVE_VERSION);
+  });
+});
+
+describe("misi harian dan kru", () => {
+  it("mereset misi pada tanggal lokal baru", () => {
+    const firstDay = new Date(2026, 0, 1, 23, 59).getTime();
+    const nextDay = new Date(2026, 0, 2, 0, 1).getTime();
+    const save = makeSave({ dailyMissions: { date: "2026-01-01", progress: { crystals: 500, taps: 10, buildings: 3 }, claimed: ["taps"] } });
+    const next = ensureDailyMissionDate(save, nextDay);
+    expect(next.dailyMissions).toEqual(defaultDailyMissionState(nextDay));
+    expect(ensureDailyMissionDate(save, firstDay)).toBe(save);
+  });
+
+  it("efek kru berlaku dan kru putaran hilang saat lebur", () => {
+    const plain = makeSave();
+    const crew = makeSave({ crew: { engineer: true, geologist: true, herbalist: true } });
+    expect(autoBuysPerTick(crew)).toBe(autoBuysPerTick(plain) + 1);
+    expect(globalMultiplier(crew)).toBeCloseTo(globalMultiplier(plain) * 1.1);
+    expect(offlineEfficiency(crew)).toBe(offlineEfficiency(plain) + 0.1);
+    expect(prestige(makeSave({ total: 1_000_000, crew: crew.crew })).crew).toEqual({ engineer: false, geologist: false, herbalist: false });
   });
 });
 
@@ -373,6 +395,20 @@ describe("sanitizeSave", () => {
     expect(save.materialBuildings).toEqual({ wood: 0, stone: 0, herb: 0 });
     expect(save.materialUpgrades).toEqual({ wood: 0, stone: 0, herb: 0 });
     expect(save.v).toBe(SAVE_VERSION);
+  });
+
+  it("memigrasikan save v4 sambil mempertahankan ekonomi material", () => {
+    const save = sanitizeSave({
+      v: 4,
+      crystals: 700,
+      materials: { wood: 31, stone: 7, herb: 2 },
+      materialBuildings: { wood: 2, stone: 1, herb: 0 },
+      materialUpgrades: { wood: 1, stone: 0, herb: 0 },
+    }, 1234);
+    expect(save.materials).toEqual({ wood: 31, stone: 7, herb: 2 });
+    expect(save.materialBuildings).toEqual({ wood: 2, stone: 1, herb: 0 });
+    expect(save.dailyMissions.date).toBe(defaultDailyMissionState(1234).date);
+    expect(save.crew).toEqual({ engineer: false, geologist: false, herbalist: false });
   });
 
   it("bertahan dari input bukan objek", () => {

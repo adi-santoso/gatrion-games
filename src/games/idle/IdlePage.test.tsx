@@ -117,6 +117,39 @@ describe("IdlePage", () => {
     });
   });
 
+  it("mengklaim misi harian satu kali", async () => {
+    const dailyMissions = {
+      date: new Date().toLocaleDateString("sv-SE"),
+      progress: { crystals: 500, taps: 10, buildings: 3 },
+      claimed: [],
+    };
+    seed({ crystals: 1000, auto: false, dailyMissions });
+    renderPage();
+    const mission = document.querySelector('[data-mission="crystals"]') as HTMLElement;
+    fireEvent.click(within(mission).getByRole("button", { name: "Klaim" }));
+    await waitFor(() => {
+      expect(stored().crystals).toBe(1250);
+      expect(stored().dailyMissions.claimed).toContain("crystals");
+    });
+    expect(within(mission).getByText("Diklaim")).toBeInTheDocument();
+  });
+
+  it("merekrut spesialis setelah membangun sumber material", async () => {
+    seed({
+      auto: false,
+      materials: { wood: 30, stone: 0, herb: 0 },
+      materialBuildings: { wood: 1, stone: 0, herb: 0 },
+    });
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: "Character" }));
+    const engineer = document.querySelector('[data-recruit="engineer"]') as HTMLElement;
+    fireEvent.click(within(engineer).getByRole("button", { name: "Rekrut" }));
+    await waitFor(() => {
+      expect(stored().crew.engineer).toBe(true);
+      expect(stored().materials.wood).toBe(0);
+    });
+  });
+
   it("menambahkan hasil material offline ke save dan ringkasan kembali", async () => {
     seed({
       auto: false,

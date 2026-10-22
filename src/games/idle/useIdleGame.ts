@@ -2,10 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ACHIEVEMENTS,
   CORE_UPGRADES,
+  DAILY_MISSIONS,
   GENERATORS,
   MATERIAL_IDS,
   MATERIAL_UPGRADE_MAX,
   RUN_UPGRADES,
+  RECRUITS,
   SAVE_VERSION,
   autoBuyStep,
   autoBuysPerTick,
@@ -17,6 +19,8 @@ import {
   coreGain,
   coreUpgradeCost,
   defaultSave,
+  ensureDailyMissionDate,
+  addDailyMissionProgress,
   emptyMaterialBag,
   materialBuildingAffordableCount,
   materialBuildingBulkCost,
@@ -30,7 +34,7 @@ import {
   wantedCount,
 } from "./economy";
 import { loadIdleSave, saveIdleSave } from "./storage";
-import type { BuyAmount, IdleSave, MaterialId, OfflineReport, PermId, UpgradeId } from "./types";
+import type { BuyAmount, DailyMissionId, IdleSave, MaterialId, OfflineReport, PermId, RecruitId, UpgradeId } from "./types";
 
 export interface IdleToast {
   id: number;
@@ -39,12 +43,12 @@ export interface IdleToast {
 
 export function useIdleGame() {
   const initial = useMemo(() => {
-    const loaded = loadIdleSave();
+    const loaded = ensureDailyMissionDate(loadIdleSave());
     const report = offlineReport(loaded);
 
     const hasMaterialGain = MATERIAL_IDS.some((id) => report.materials[id] > 0);
     const hasOfflineGain = report.gain >= 1 || hasMaterialGain;
-    const base: IdleSave = !hasOfflineGain
+    let base: IdleSave = !hasOfflineGain
       ? loaded
       : {
             ...loaded,
@@ -60,6 +64,7 @@ export function useIdleGame() {
             ach: loaded.ach.includes("offline") ? loaded.ach : [...loaded.ach, "offline"],
             lastSeen: Date.now(),
           };
+    if (hasOfflineGain && report.gain > 0) base = addDailyMissionProgress(base, "crystals", report.gain);
 
     // pencapaian yang sebenarnya sudah terpenuhi tapi belum tercatat
     const unlocked = newlyUnlocked(base);
@@ -85,7 +90,7 @@ export function useIdleGame() {
 
   const commit = useCallback((updater: (current: IdleSave) => IdleSave) => {
     setSave((previous) => {
-      let next = updater(previous);
+      let next = ensureDailyMissionDate(updater(previous));
       const unlocked = newlyUnlocked(next);
       if (unlocked.length > 0) {
         next = { ...next, ach: [...next.ach, ...unlocked] };
@@ -117,13 +122,16 @@ export function useIdleGame() {
           const gain = Math.floor(accumulated);
           accumulated -= gain;
           setSave((previous) => {
-            const next: IdleSave = {
+            let next: IdleSave = {
               ...previous,
               crystals: previous.crystals + gain,
               total: previous.total + gain,
               allTime: Math.max(previous.allTime, previous.total + gain),
               best: Math.max(previous.best, previous.crystals + gain),
             };
+            next = addDailyMissionProgress(next, "crystals", gain);
+            next = { ...next, v: SAVE_VERSION };
+            saveIdleSave(next);
             saveRef.current = next;
             return next;
           });
@@ -163,7 +171,7 @@ export function useIdleGame() {
 
     const timer = window.setInterval(() => {
       setSave((previous) => {
-        let next = previous;
+        let next = ensureDailyMissionDate(previous);
         // beberapa pembelian per tick supaya tidak tertinggal saat laju tinggi
         const steps = autoBuysPerTick(previous);
         for (let i = 0; i < steps; i++) {
@@ -172,6 +180,8 @@ export function useIdleGame() {
           if (!stepped) break;
           next = stepped;
         }
+        const purchased = Math.max(0, next.autoBuys - previous.autoBuys);
+        if (purchased > 0) next = addDailyMissionProgress(next, "buildings", purchased);
         if (next === previous) return previous;
         const unlocked = newlyUnlocked(next);
         if (unlocked.length > 0) next = { ...next, ach: [...next.ach, ...unlocked] };
@@ -181,7 +191,23 @@ export function useIdleGame() {
     }, 500);
 
     return () => window.clearInterval(timer);
-  }, [save.auto, save.perm.autobuy]);
+  }, [save.auto, save.perm.autobuy, save.crew.engineer]);
+
+  // Local date rollover is applied even while the tab stays open.
+  useEffect(() => {
+    const rollDate = () => {
+      const current = saveRef.current;
+      const next = ensureDailyMissionDate(current);
+      if (next === current) return;
+      next.lastSeen = Date.now();
+      next.v = SAVE_VERSION;
+      saveRef.current = next;
+      setSave(next);
+      saveIdleSave(next);
+    };
+    const timer = window.setInterval(rollDate, 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   // ------------------------------------------------------------ periodic save
   useEffect(() => {
@@ -227,14 +253,14 @@ export function useIdleGame() {
   const tap = useCallback(() => {
     commit((current) => {
       const gain = clickGain(current);
-      return {
+      return addDailyMissionProgress(addDailyMissionProgress({
         ...current,
         crystals: current.crystals + gain,
         total: current.total + gain,
         allTime: Math.max(current.allTime, current.total + gain),
         clicks: current.clicks + 1,
         best: Math.max(current.best, current.crystals + gain),
-      };
+      }, "crystals", gain), "taps", 1);
     });
   }, [commit]);
 
@@ -255,11 +281,11 @@ export function useIdleGame() {
         return;
       }
 
-      commit((state) => ({
+      commit((state) => addDailyMissionProgress({
         ...state,
         crystals: state.crystals - cost,
         gens: { ...state.gens, [generator.id]: (state.gens[generator.id] ?? 0) + quantity },
-      }));
+      }, "buildings", quantity));
     },
     [commit, notify],
   );
@@ -279,14 +305,14 @@ export function useIdleGame() {
         notify("Kristal belum cukup untuk bangunan material");
         return;
       }
-      commit((state) => ({
+      commit((state) => addDailyMissionProgress({
         ...state,
         crystals: state.crystals - cost,
         materialBuildings: {
           ...state.materialBuildings,
           [id]: state.materialBuildings[id] + quantity,
         },
-      }));
+      }, "buildings", quantity));
     },
     [commit, notify],
   );
@@ -389,6 +415,45 @@ export function useIdleGame() {
     [commit],
   );
 
+  const claimDailyMission = useCallback((id: DailyMissionId) => {
+    const mission = DAILY_MISSIONS.find((item) => item.id === id);
+    if (!mission) return;
+    const current = ensureDailyMissionDate(saveRef.current);
+    if (current.dailyMissions.claimed.includes(id) || current.dailyMissions.progress[id] < mission.target) return;
+    commit((state) => ({
+      ...state,
+      crystals: state.crystals + mission.reward,
+      dailyMissions: { ...state.dailyMissions, claimed: [...state.dailyMissions.claimed, id] },
+    }));
+    notify(`Misi selesai: +${mission.reward} kristal`);
+  }, [commit, notify]);
+
+  const recruit = useCallback((id: RecruitId) => {
+    const def = RECRUITS.find((item) => item.id === id);
+    if (!def) return;
+    const current = saveRef.current;
+    if (current.crew[id]) return;
+    const costs = Object.entries(def.cost) as Array<[MaterialId, number]>;
+    const source = costs[0]?.[0];
+    if (!source || current.materialBuildings[source] <= 0) {
+      notify("Bangun sumber material lebih dulu");
+      return;
+    }
+    if (costs.some(([material, amount]) => current.materials[material] < amount)) {
+      notify("Material belum cukup untuk merekrut");
+      return;
+    }
+    commit((state) => ({
+      ...state,
+      materials: costs.reduce((materials, [material, amount]) => ({
+        ...materials,
+        [material]: materials[material] - amount,
+      }), state.materials),
+      crew: { ...state.crew, [id]: true },
+    }));
+    notify(`${def.name} bergabung dengan kru`);
+  }, [commit, notify]);
+
   const runPrestige = useCallback(() => {
     const current = saveRef.current;
     if (!canPrestige(current)) {
@@ -435,6 +500,8 @@ export function useIdleGame() {
     buyClickUpgrade,
     setBuy,
     setAuto,
+    claimDailyMission,
+    recruit,
     runPrestige,
     reset,
     dismissOffline,

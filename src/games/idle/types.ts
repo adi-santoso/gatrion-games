@@ -8,6 +8,16 @@ export type MaterialId = "wood" | "stone" | "herb";
 
 export type MaterialBag = Record<MaterialId, number>;
 
+export type DailyMissionId = "crystals" | "taps" | "buildings";
+
+export type RecruitId = "engineer" | "geologist" | "herbalist";
+
+export interface DailyMissionState {
+  date: string;
+  progress: Record<DailyMissionId, number>;
+  claimed: DailyMissionId[];
+}
+
 export interface Generator {
   id: string;
   name: string;
@@ -54,6 +64,8 @@ export interface IdleSave {
   /** Bangunan penghasil material dan upgrade pemakaian material. */
   materialBuildings: Record<MaterialId, number>;
   materialUpgrades: Record<MaterialId, number>;
+  dailyMissions: DailyMissionState;
+  crew: Record<RecruitId, boolean>;
 }
 
 export interface OfflineReport {
