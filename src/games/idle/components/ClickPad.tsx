@@ -38,8 +38,11 @@ export function ClickPad({ gain, tierId, tierName, onTap }: Props) {
   return (
     <div className="mine-scene" aria-label="Area tambang kristal">
       <div className="mine-scene-stars" aria-hidden="true" />
-      <div className="mine-scene-ridge mine-scene-ridge-back" aria-hidden="true" />
-      <div className="mine-scene-ridge mine-scene-ridge-front" aria-hidden="true" />
+      <div className="mine-scene-assets" aria-hidden="true">
+        <img className="mine-scene-asset mine-scene-asset-rig" src="/icons/idle/rig.png" alt="" width="88" height="88" />
+        <img className="mine-scene-asset mine-scene-asset-drill" src="/icons/idle/drill.png" alt="" width="72" height="72" />
+        <img className="mine-scene-asset mine-scene-asset-plant" src="/icons/idle/plant.png" alt="" width="58" height="58" />
+      </div>
       <div className="mine-scene-label">
         <span className="mine-scene-live"><span /> AREA TAMBANG</span>
         <span className="mine-scene-sector">SEKTOR 01 · KEDALAMAN AKTIF</span>
