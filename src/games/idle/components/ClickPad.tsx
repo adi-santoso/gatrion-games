@@ -10,11 +10,12 @@ interface Pop {
 
 interface Props {
   gain: number;
+  tierId: string;
   tierName: string;
   onTap: () => void;
 }
 
-export function ClickPad({ gain, tierName, onTap }: Props) {
+export function ClickPad({ gain, tierId, tierName, onTap }: Props) {
   const [pops, setPops] = useState<Pop[]>([]);
   const nextId = useRef(0);
 
@@ -42,9 +43,14 @@ export function ClickPad({ gain, tierName, onTap }: Props) {
         aria-label={`Ketuk untuk kristal (bonus +${formatNumber(gain)})`}
         onClick={handleClick}
       >
-        <span aria-hidden="true" className="core-glyph">
-          ◆
-        </span>
+        <img
+          className="core-icon"
+          src={`/icons/idle/${tierId}.png`}
+          alt=""
+          width={64}
+          height={64}
+          decoding="async"
+        />
         <span className="core-tier">{tierName}</span>
         <span className="core-bonus">+{formatNumber(gain)}</span>
       </button>

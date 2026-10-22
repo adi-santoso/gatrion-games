@@ -2,6 +2,7 @@ import { Switch } from "../../../components/Switch";
 import { formatNumber } from "../../../lib/format";
 import { autoBuysPerTick } from "../economy";
 import type { IdleSave } from "../types";
+import { HelmetGlyph } from "./Glyphs";
 
 interface Props {
   save: IdleSave;
@@ -19,6 +20,7 @@ export function AutoSection({ save, onToggle }: Props) {
             aria-hidden="true"
             className={`inline-block h-1.5 w-1.5 rounded-full ${save.auto ? "bg-lime" : "bg-line-strong"}`}
           />
+          <HelmetGlyph className="text-muted" />
           <h2 className="text-[13px] font-medium">Mandor otomatis</h2>
         </div>
         <Switch label="Auto-beli generator" checked={save.auto} onChange={onToggle} />

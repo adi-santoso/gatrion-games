@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Ikon pick">
+  <title>pick</title>
+    <defs>
+      <linearGradient id="plate-pick" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2e2f24"/>
+        <stop offset="1" stop-color="#14150e"/>
+      </linearGradient>
+    </defs>
+    <rect x="1.75" y="1.75" width="60.5" height="60.5" rx="14" fill="url(#plate-pick)" stroke="#4b4d37" stroke-width="1.5"/>
+    <path d="M13 9 Q32 3 51 9" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 34 Q35 5 55 34" stroke="#cdf94b" stroke-width="7"/>
+    <path d="M15 34 l-4 7 M55 34 l4 7" stroke="#cdf94b" stroke-width="5"/>
+    <path d="M35 22 L26 54" stroke="#ece9df" stroke-width="5"/>
+    <path d="M27 46 l7 4" stroke="#e0bf7a" stroke-width="4"/>
+    <circle cx="35" cy="22" r="2.6" fill="#ece9df"/>
+  
+  </g>
+</svg>

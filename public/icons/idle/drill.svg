@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Ikon drill">
+  <title>drill</title>
+    <defs>
+      <linearGradient id="plate-drill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2e2f24"/>
+        <stop offset="1" stop-color="#14150e"/>
+      </linearGradient>
+    </defs>
+    <rect x="1.75" y="1.75" width="60.5" height="60.5" rx="14" fill="url(#plate-drill)" stroke="#4b4d37" stroke-width="1.5"/>
+    <path d="M13 9 Q32 3 51 9" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="3"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="18" y="18" width="21" height="17" rx="5" stroke="#ece9df" stroke-width="3.4"/>
+    <rect x="22" y="23" width="8" height="7" rx="1.5" fill="#cdf94b"/>
+    <path d="M39 21 h7 v8 h-7" stroke="#ece9df" stroke-width="3.2"/>
+    <path d="M22 35 h13 v5 h-9" stroke="#ece9df" stroke-width="3"/>
+    <path d="M28 40 v11" stroke="#ece9df" stroke-width="4"/>
+    <path d="M23 44 l9 3 M23 49 l9 3" stroke="#cdf94b" stroke-width="2.2"/>
+    <path d="M18 29 h-4" stroke="#e0bf7a" stroke-width="3.4"/>
+  
+  </g>
+</svg>

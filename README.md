@@ -22,10 +22,11 @@ ditaruh di hosting mana pun (Netlify, Cloudflare Pages, GitHub Pages, nginx).
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 88 pemeriksaan (engine, reducer, statistik, ekonomi, format, UI)
+npm test           # 108 pemeriksaan (engine, reducer, statistik, ekonomi, format, UI, aset)
 npm run build      # tsc --noEmit && vite build -> dist/
 npm run preview    # cek hasil build di :4173
 npm run dict       # regenerasi kamus Wordle (butuh jaringan)
+npm run icons      # regenerasi aset ikon idle (SVG; PNG butuh resvg)
 ```
 
 Butuh Node 20+.
@@ -88,6 +89,29 @@ membeli generator untukmu. Klik hanya bonus opsional, bukan syarat progres.
   diketuk sebagai bonus, jalur kedalaman 10 segmen, lalu dock bertab — tambang, riset, lebur, dan
   arsip — supaya semua panel tidak menumpuk jadi satu halaman panjang.
 
+## Aset idle
+
+Sepuluh tier punya lambang sendiri, dari pencungkil sampai inti galaksi, plus ikon garis kecil untuk
+HUD (kristal, inti, mandor, riset, gembok). Semua dibuat sendiri oleh generator di
+`tools/build-idle-icons.mjs` — tidak ada aset pihak ketiga.
+
+- **PNG 192×192** di `public/icons/idle/<tier>.png` dipakai langsung oleh kartu tier dan inti di
+  stage (`.tier-icon`, `.core-icon`).
+- **SVG sumber** di folder yang sama bisa diedit lalu diregenerasi; skrip menulis ulang keduanya.
+- Ikon memakai *plat* gelap bergaya slot item, jadi tetap terbaca di tema terang maupun gelap tanpa
+  perlu dua set gambar. Gaya: garis krem 3–4px, aksen lime untuk kristal dan amber untuk energi.
+- Ikon garis di HUD memakai `currentColor` (`components/Glyphs.tsx`), jadi otomatis ikut warna teks.
+
+PNG dibuat dengan `@resvg/resvg-js` yang **tidak** menjadi dependency proyek:
+
+```bash
+npm install --prefix .cache/render @resvg/resvg-js
+node tools/build-idle-icons.mjs --sheet   # sekalian contact sheet di .cache/idle-icons/
+```
+
+Tanpa resvg skrip tetap menulis SVG saja. `iconAssets.test.ts` memastikan setiap tier punya PNG
+192px yang valid dan SVG sumbernya, jadi nama file tidak bisa melenceng dari id tier.
+
 ## Struktur
 
 ```
@@ -112,10 +136,12 @@ src/
   games/idle/
     economy.ts            tier, milestone, riset, inti, prestise, auto-beli, offline (pure)
     storage.ts, useIdleGame.ts
-    IdlePage.tsx, components/{ShopList,UpgradesPanel,PrestigePanel,PrestigeDialog,AutoSection,ClickPad,AchievementsList,OfflineDialog}.tsx
+    IdlePage.tsx, components/{ShopList,UpgradesPanel,PrestigePanel,PrestigeDialog,AutoSection,ClickPad,AchievementsList,OfflineDialog,Glyphs}.tsx
   data/wordle-id.json, wordle-en.json   kamus hasil generator (jangan diedit manual)
   test/setup.ts
+public/icons/idle/        aset lambang tier (PNG 192px + SVG sumber)
 tools/build-wordle-dict.js            generator kamus (Node murni, tanpa dependency)
+tools/build-idle-icons.mjs            generator aset ikon idle (SVG, PNG opsional)
 ```
 
 ## Kamus

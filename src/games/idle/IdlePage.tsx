@@ -6,6 +6,7 @@ import { formatDuration, formatNumber } from "../../lib/format";
 import { AchievementsList } from "./components/AchievementsList";
 import { AutoSection } from "./components/AutoSection";
 import { ClickPad } from "./components/ClickPad";
+import { CoreGlyph, CrystalGlyph, FlaskGlyph } from "./components/Glyphs";
 import { OfflineDialog } from "./components/OfflineDialog";
 import { PrestigeDialog } from "./components/PrestigeDialog";
 import { PrestigePanel } from "./components/PrestigePanel";
@@ -71,7 +72,7 @@ export function IdlePage() {
 
             <div className="idle-hud">
               <span className="idle-chip" data-tone="accent">
-                <span aria-hidden="true">◈</span>
+                <CoreGlyph />
                 <strong data-testid="cores">{formatNumber(save.cores)}</strong>
                 <span>inti</span>
                 <button
@@ -96,11 +97,19 @@ export function IdlePage() {
           </div>
 
           <section className="idle-stage">
-            <ClickPad gain={gain} tierName={topTier.name} onTap={idle.tap} />
+            <ClickPad
+              gain={gain}
+              tierId={topTier.id}
+              tierName={topTier.name}
+              onTap={idle.tap}
+            />
 
             <div className="idle-score">
-              <div className="flex items-baseline justify-between gap-3">
-                <span className="panel-title">kristal</span>
+              <div className="flex items-center justify-between gap-3">
+                <span className="panel-title flex items-center gap-1.5">
+                  <CrystalGlyph />
+                  kristal
+                </span>
                 <span className="mono text-[10px] text-muted">
                   sesi {formatDuration(Date.now() - save.startedAt)}
                 </span>
@@ -174,7 +183,10 @@ export function IdlePage() {
               {tab === "research" && (
                 <>
                   <div className="panel-head">
-                    <span className="panel-title">riset putaran</span>
+                    <span className="panel-title flex items-center gap-1.5">
+                      <FlaskGlyph />
+                      riset putaran
+                    </span>
                     <span className="mono text-[10px] text-muted">reset saat lebur</span>
                   </div>
                   <UpgradesPanel save={save} onBuy={idle.buyRunUpgrade} />
