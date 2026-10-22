@@ -72,6 +72,12 @@ export function IdlePage() {
 
             <div className="idle-hud">
               <span className="idle-chip" data-tone="accent">
+                <CrystalGlyph />
+                <strong data-testid="hud-crystals">{formatNumber(save.crystals)}</strong>
+                <span>kristal</span>
+                <span className="mono text-lime">+{formatNumber(rate)}/dtk</span>
+              </span>
+              <span className="idle-chip" data-tone="accent">
                 <CoreGlyph />
                 <strong data-testid="cores">{formatNumber(save.cores)}</strong>
                 <span>inti</span>
@@ -127,12 +133,18 @@ export function IdlePage() {
 
               <DepthStrip save={save} />
 
+              <div className="next-tier-card">
+                <div className="next-tier-copy">
+                  <span className="panel-title">berikutnya</span>
+                  <strong>{nextTier ? nextTier.name : "Semua tier terbuka"}</strong>
+                  <span className="mono text-[10px] text-muted">
+                    {nextTier ? unlockHint(save, nextTier) : "Kamu telah mencapai seluruh generator."}
+                  </span>
+                </div>
+                <span className="next-tier-action" aria-hidden="true">↗</span>
+              </div>
               <div className="mono mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[10px] text-muted">
-                <span>
-                  {nextTier
-                    ? `berikutnya ${nextTier.name} · ${unlockHint(save, nextTier)}`
-                    : "semua tier sudah terbuka"}
-                </span>
+                <span>Produksi tetap berjalan saat kamu pergi.</span>
                 <span className="text-muted/70">ketuk inti = bonus, tidak wajib</span>
               </div>
             </div>
