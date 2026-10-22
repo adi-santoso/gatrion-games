@@ -278,6 +278,15 @@ export function IdlePage() {
             />
           ) : <>
           <div className="tab-bar" role="group" aria-label="Panel tambang">
+            <button
+              type="button"
+              className="tab-btn"
+              aria-label="Kembali ke overview Home"
+              aria-pressed={false}
+              onClick={() => setPanelTab("home")}
+            >
+              overview
+            </button>
             {TABS.map((item) => (
               <button
                 key={item.id}
