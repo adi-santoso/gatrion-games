@@ -1007,3 +1007,403 @@
     animation: none;
   }
 }
+
+
+/* ==========================================================================
+   Idle game visual overhaul — crystal cavern
+   Scoped to the idle cabinet so other mini-games keep their own theme.
+   ========================================================================== */
+.idle-cabinet {
+  --color-bg: #101710;
+  --color-bg-soft: #172219;
+  --color-surface: #1b281e;
+  --color-surface-hi: #26382a;
+  --color-line: #344a35;
+  --color-line-strong: #587353;
+  --color-ink: #edf5df;
+  --color-muted: #9aaa91;
+  --color-lime: #c8f36a;
+  --color-amber: #f0c778;
+  --color-danger: #ff8a72;
+  --dot: rgba(210, 244, 184, 0.07);
+  --overlay: rgba(2, 8, 4, 0.78);
+  --shadow-card: 0 1px 0 rgba(231, 255, 219, 0.06) inset, 0 22px 60px rgba(0, 0, 0, 0.28);
+  --shadow-pop: 0 22px 60px rgba(0, 0, 0, 0.55);
+  --glow: rgba(180, 255, 91, 0.18);
+  --ring: rgba(200, 243, 106, 0.42);
+  --stage-1: rgba(98, 164, 66, 0.13);
+  border-color: #3b5039;
+  background: #101710;
+  color: var(--color-ink);
+  box-shadow: 0 24px 70px rgba(11, 25, 12, 0.2);
+}
+
+.idle-cabinet .idle-top {
+  background: linear-gradient(105deg, #1c2b1e, #172219 72%);
+}
+
+.idle-cabinet .idle-stage {
+  position: relative;
+  isolation: isolate;
+  gap: 1.25rem;
+  background:
+    radial-gradient(ellipse at 15% 45%, rgba(105, 170, 57, 0.14), transparent 38%),
+    radial-gradient(ellipse at 85% 0%, rgba(63, 117, 74, 0.13), transparent 45%),
+    linear-gradient(145deg, #18251b, #101710 78%);
+}
+
+.idle-cabinet .idle-stage::after {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200, 243, 106, 0.35), transparent);
+  content: "";
+}
+
+.idle-cabinet .idle-score-value {
+  color: #efffdc;
+  text-shadow: 0 0 28px rgba(181, 255, 107, 0.1);
+}
+
+.idle-cabinet .depth-seg[data-on="true"] {
+  box-shadow: 0 0 14px rgba(200, 243, 106, 0.06) inset;
+}
+
+.idle-cabinet .tab-bar {
+  background: #131d15;
+}
+
+.idle-cabinet .tab-btn {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.idle-cabinet .tab-btn[aria-pressed="true"] {
+  background: linear-gradient(180deg, rgba(200, 243, 106, 0.11), transparent 85%);
+  box-shadow: inset 0 2px 0 var(--color-lime);
+  color: var(--color-lime);
+}
+
+.idle-cabinet .tier-card {
+  border-color: #2e402f;
+  background: linear-gradient(135deg, rgba(40, 57, 41, 0.86), rgba(24, 35, 25, 0.92));
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.idle-cabinet .tier-card[data-unlocked="true"]:hover {
+  transform: translateY(-1px);
+  border-color: rgba(200, 243, 106, 0.48);
+  background: linear-gradient(135deg, #2b402c, #1b2a1d);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.idle-cabinet .tier-card[data-unlocked="false"] {
+  background: linear-gradient(135deg, rgba(29, 39, 30, 0.82), rgba(21, 29, 22, 0.9));
+}
+
+.idle-cabinet .tier-ico {
+  border-color: #425740;
+  background: #202e22;
+}
+
+.idle-cabinet .tier-cost {
+  border-color: rgba(200, 243, 106, 0.18);
+  background: rgba(200, 243, 106, 0.06);
+}
+
+.idle-cabinet .panel-head {
+  border-color: #2b3b2c;
+}
+
+.idle-cabinet .stat-tile {
+  border-color: #344a35;
+  background: linear-gradient(135deg, #203023, #18241a);
+}
+
+.idle-cabinet .idle-chip {
+  background: rgba(11, 18, 12, 0.45);
+}
+
+.idle-cabinet .idle-chip[data-tone="accent"] {
+  background: rgba(200, 243, 106, 0.07);
+}
+
+.idle-cabinet .mine-scene {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 282px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(151, 194, 123, 0.24);
+  border-radius: 15px;
+  background:
+    radial-gradient(ellipse at 50% 57%, rgba(123, 213, 69, 0.22), transparent 34%),
+    radial-gradient(ellipse at 48% 105%, rgba(38, 100, 51, 0.46), transparent 55%),
+    linear-gradient(180deg, #1c3023 0%, #17271d 52%, #0d1811 100%);
+  box-shadow: inset 0 1px 0 rgba(231, 255, 219, 0.07), inset 0 -24px 60px rgba(0, 0, 0, 0.23);
+}
+
+.idle-cabinet .mine-scene::before,
+.idle-cabinet .mine-scene::after {
+  position: absolute;
+  z-index: -1;
+  right: -8%;
+  bottom: 0;
+  left: -8%;
+  height: 40%;
+  content: "";
+  pointer-events: none;
+}
+
+.idle-cabinet .mine-scene::before {
+  background: linear-gradient(180deg, rgba(47, 78, 48, 0.6), #122017);
+  clip-path: polygon(0 78%, 12% 45%, 25% 67%, 39% 20%, 53% 61%, 66% 32%, 82% 65%, 94% 40%, 100% 56%, 100% 100%, 0 100%);
+}
+
+.idle-cabinet .mine-scene::after {
+  height: 24%;
+  background: linear-gradient(180deg, rgba(12, 24, 15, 0.2), #0a120c);
+  clip-path: polygon(0 48%, 18% 26%, 33% 60%, 48% 18%, 65% 52%, 79% 27%, 100% 56%, 100% 100%, 0 100%);
+}
+
+.idle-cabinet .mine-scene-stars {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  opacity: 0.6;
+  background-image:
+    radial-gradient(circle, rgba(220, 255, 181, 0.75) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(159, 220, 126, 0.55) 0 1px, transparent 1.6px);
+  background-position: 10px 18px, 38px 48px;
+  background-size: 61px 67px, 83px 79px;
+  mask-image: linear-gradient(180deg, #000, transparent 76%);
+  pointer-events: none;
+}
+
+.idle-cabinet .mine-scene-ridge {
+  position: absolute;
+  z-index: -1;
+  right: -10%;
+  bottom: 0;
+  left: -10%;
+  pointer-events: none;
+}
+
+.idle-cabinet .mine-scene-ridge-back {
+  height: 42%;
+  background: linear-gradient(180deg, rgba(77, 115, 68, 0.6), rgba(18, 35, 21, 0.92));
+  clip-path: polygon(0 85%, 15% 55%, 29% 70%, 42% 34%, 54% 64%, 71% 23%, 84% 62%, 100% 42%, 100% 100%, 0 100%);
+}
+
+.idle-cabinet .mine-scene-ridge-front {
+  height: 25%;
+  background: linear-gradient(180deg, #1b3320, #0b150e);
+  clip-path: polygon(0 50%, 18% 20%, 35% 60%, 50% 28%, 70% 65%, 84% 24%, 100% 48%, 100% 100%, 0 100%);
+}
+
+.idle-cabinet .mine-scene-label {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  left: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.11em;
+}
+
+.idle-cabinet .mine-scene-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #d7efc5;
+}
+
+.idle-cabinet .mine-scene-live > span,
+.idle-cabinet .mine-scene-footer i {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #c8f36a;
+  box-shadow: 0 0 10px rgba(200, 243, 106, 0.6);
+}
+
+.idle-cabinet .mine-scene-sector {
+  color: rgba(205, 224, 194, 0.58);
+  text-align: right;
+}
+
+.idle-cabinet .mine-crystal-wrap {
+  position: relative;
+  display: flex;
+  width: 174px;
+  height: 174px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 7px;
+}
+
+.idle-cabinet .mine-orbit {
+  position: absolute;
+  border: 1px solid rgba(192, 245, 140, 0.32);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.idle-cabinet .mine-orbit-one {
+  inset: 8px;
+  border-style: dashed;
+  animation: core-spin 38s linear infinite;
+}
+
+.idle-cabinet .mine-orbit-two {
+  inset: 20px;
+  border-color: rgba(192, 245, 140, 0.14);
+  box-shadow: 0 0 26px rgba(130, 220, 78, 0.08);
+}
+
+.idle-cabinet .mine-crystal {
+  position: relative;
+  display: flex;
+  width: 118px;
+  height: 136px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid rgba(195, 238, 158, 0.3);
+  border-radius: 58px 58px 44px 44px;
+  background: linear-gradient(160deg, rgba(56, 81, 51, 0.94), rgba(16, 32, 20, 0.95));
+  box-shadow: 0 0 0 7px rgba(155, 226, 106, 0.045), 0 12px 35px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #f1ffdf;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.idle-cabinet .mine-crystal:hover {
+  transform: translateY(-2px);
+  border-color: rgba(200, 243, 106, 0.72);
+  box-shadow: 0 0 0 9px rgba(155, 226, 106, 0.07), 0 0 36px rgba(133, 235, 78, 0.16), 0 12px 35px rgba(0, 0, 0, 0.34);
+}
+
+.idle-cabinet .mine-crystal:active {
+  transform: scale(0.96);
+}
+
+.idle-cabinet .mine-crystal-glow {
+  position: absolute;
+  z-index: -1;
+  inset: 10px;
+  border-radius: 50%;
+  background: rgba(169, 255, 102, 0.13);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.idle-cabinet .mine-crystal .core-icon {
+  width: 54px;
+  height: 54px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 13px;
+  box-shadow: 0 0 22px rgba(153, 244, 86, 0.18), 0 7px 18px rgba(0, 0, 0, 0.32);
+}
+
+.idle-cabinet .mine-crystal .core-tier {
+  color: #c7d8ba;
+  font-size: 8px;
+}
+
+.idle-cabinet .mine-crystal .core-bonus {
+  color: #d8ff9c;
+  font-size: 10px;
+}
+
+.idle-cabinet .mine-crystal .core-bonus small {
+  display: block;
+  margin-top: 2px;
+  color: rgba(211, 232, 198, 0.55);
+  font-size: 6px;
+  letter-spacing: 0.1em;
+}
+
+.idle-cabinet .mine-scene-footer {
+  position: absolute;
+  right: 13px;
+  bottom: 12px;
+  left: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: rgba(203, 226, 190, 0.6);
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.1em;
+}
+
+.idle-cabinet .mine-scene-footer > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #c9e6b4;
+}
+
+.idle-cabinet .mine-scene-footer i {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  list-style: none;
+}
+
+.idle-cabinet .mine-crystal-wrap .pop-float {
+  z-index: 4;
+  color: #d7ff91;
+  font-weight: 700;
+  text-shadow: 0 1px 10px rgba(118, 238, 59, 0.5);
+}
+
+.idle-cabinet .idle-stage .core-icon {
+  object-fit: cover;
+}
+
+@media (min-width: 640px) {
+  .idle-cabinet .idle-stage {
+    grid-template-columns: minmax(210px, 0.72fr) minmax(0, 1.28fr);
+    align-items: stretch;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+  .idle-cabinet .mine-scene {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 639px) {
+  .idle-cabinet .mine-scene {
+    min-height: 255px;
+  }
+  .idle-cabinet .mine-crystal-wrap {
+    transform: scale(0.88);
+  }
+  .idle-cabinet .mine-scene-sector {
+    max-width: 48%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .idle-cabinet .mine-orbit-one {
+    animation: none;
+  }
+}
