@@ -3166,3 +3166,165 @@
     padding-inline: 0.55rem;
   }
 }
+
+/* M8 — keep new mission and crew surfaces aligned with the mockup panels. */
+.idle-daily-panel {
+  padding: 0.7rem;
+}
+
+.idle-daily-list {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.idle-daily-card {
+  min-width: 0;
+  padding: 0.48rem 0.55rem;
+  border: 1px solid rgba(151, 194, 123, 0.17);
+  border-radius: 8px;
+  background: rgba(7, 14, 8, 0.3);
+}
+
+.idle-daily-card > div:first-child {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.idle-daily-card strong {
+  color: #e4eddb;
+  font-size: 0.62rem;
+  font-weight: 570;
+}
+
+.idle-daily-card > div:first-child span,
+.idle-daily-card > div:last-child span {
+  color: #9aaa91;
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  white-space: nowrap;
+}
+
+.idle-daily-progress {
+  height: 4px;
+  overflow: hidden;
+  margin-top: 0.35rem;
+  border-radius: 99px;
+  background: rgba(151, 194, 123, 0.14);
+}
+
+.idle-daily-progress > div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #7eaa43, #c8f36a);
+  transition: width 180ms ease;
+}
+
+.idle-daily-card > div:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.idle-daily-card > div:last-child .text-lime {
+  color: #c8f36a;
+}
+
+.idle-daily-claim {
+  padding: 0.16rem 0.42rem;
+  border: 1px solid rgba(200, 243, 106, 0.38);
+  border-radius: 5px;
+  background: rgba(200, 243, 106, 0.08);
+  color: #d8f69c;
+  font-family: var(--font-mono);
+  font-size: 0.53rem;
+  cursor: pointer;
+}
+
+.idle-daily-claim:hover {
+  background: rgba(200, 243, 106, 0.16);
+}
+
+.idle-crew-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.idle-crew-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 0.8rem;
+  border: 1px solid rgba(151, 194, 123, 0.2);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(27, 40, 30, 0.82), rgba(17, 27, 19, 0.92));
+}
+
+.idle-crew-role,
+.idle-crew-cost {
+  color: #98a991;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+}
+
+.idle-crew-role {
+  color: #b9ce9b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.idle-crew-card h3 {
+  margin: 0.3rem 0 0;
+  color: #e5efdc;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+}
+
+.idle-crew-card p {
+  min-height: 2.2rem;
+  margin: 0.45rem 0;
+  color: #a9b7a1;
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.idle-crew-cost {
+  margin-top: auto;
+}
+
+.idle-crew-action {
+  min-height: 34px;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgba(151, 194, 123, 0.27);
+  border-radius: 6px;
+  background: rgba(7, 14, 8, 0.38);
+  color: #dbe7d3;
+  font-size: 0.64rem;
+  cursor: pointer;
+}
+
+.idle-crew-action:hover:not(:disabled) {
+  border-color: rgba(200, 243, 106, 0.52);
+  background: rgba(200, 243, 106, 0.08);
+}
+
+.idle-crew-action:disabled {
+  color: #879783;
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+@media (max-width: 640px) {
+  .idle-crew-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .idle-crew-card p {
+    min-height: 0;
+  }
+}

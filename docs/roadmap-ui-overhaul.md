@@ -118,7 +118,7 @@ Implementasi: versi save naik dari 3 ke 4 dengan default aman kayu/batu/herbal n
 
 **Selesai bila:** tidak ada mata uang yang hanya menumpuk tanpa sink, atau biaya yang mencegah pemain mencapai sumber pertamanya.
 
-### M7 — Misi, rekrutmen, dan quick actions
+### M7 — Misi, rekrutmen, dan quick actions (selesai)
 
 **Hasil:** fitur kanan dan tombol aksi mockup memiliki perilaku permainan yang nyata.
 
@@ -131,7 +131,13 @@ Implementasi: versi save naik dari 3 ke 4 dengan default aman kayu/batu/herbal n
 
 **Selesai bila:** tidak ada aksi cepat yang melewati konfirmasi penting dan tidak ada klaim hadiah ganda.
 
-### M8 — Penyelarasan visual akhir dan penerimaan
+Implementasi: versi save naik ke 5; save v4 mempertahankan saldo/bangunan/upgrade material dan mendapat default misi/kru. Misi harian lokal mencatat kristal, ketukan, dan pembangunan; klaim sekali per tanggal menambah kristal tanpa mengubah statistik produksi. Tiga rekrutan memakai material yang sesuai, memberi efek produksi/otomatis/offline, dan direset saat lebur. Quick Action Rekrut membuka tab Kru yang berisi biaya, syarat sumber, dan efek nyata.
+
+**Masih bisa dimainkan:** misi, klaim, perekrutan, efek kru, dan peleburan berjalan di save baru maupun save lama.
+
+**Selesai bila:** 120 tes lulus, termasuk klaim satu kali, perekrutan, efek kru, tanggal lokal, reset lebur, dan migrasi v4.
+
+### M8 — Penyelarasan visual akhir dan penerimaan (selesai)
 
 **Hasil:** implementasi mendekati screenshot mockup pada desktop, dengan adaptasi mobile yang tetap fungsional.
 
@@ -140,9 +146,11 @@ Implementasi: versi save naik dari 3 ke 4 dengan default aman kayu/batu/herbal n
 - Periksa kontras, fokus keyboard, target sentuh, pembacaan layar, reduced motion, dan pemotongan konten.
 - Lakukan pemeriksaan regresi untuk alur idle, save lama, migrasi, offline, dan layar kecil.
 
+Implementasi akhir: panel misi ditempatkan di atas aktivitas berjalan mengikuti hierarki mockup. Kartu progres misi dan kru diberi framing, warna aksen, serta aturan kolom responsif yang konsisten dengan panel Bangunan/Riset/Inventory. Pemeriksaan build dan suite regresi mencakup idle, material, save/migrasi, misi, kru, peta, peleburan, serta offline.
+
 **Masih bisa dimainkan:** seluruh loop utama selesai dari awal hingga peleburan, lalu dapat dimainkan lagi dengan upgrade permanen; semua panel pada mockup memiliki konten/aksi yang berfungsi.
 
-**Selesai bila:** tampilan sesuai komposisi mockup tanpa mengorbankan kontrol atau progres game, dan pemeriksaan regresi lulus.
+**Selesai bila:** komposisi utama dan panel baru mengikuti hierarki mockup, build produksi berhasil, dan 120 tes regresi lulus.
 
 ## Batas scope dan keputusan penting
 

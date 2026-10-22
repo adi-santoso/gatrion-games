@@ -499,6 +499,7 @@ function IdleUtilityRail({
 }: IdleUtilityRailProps) {
   return (
     <div className="idle-utility-column">
+      <DailyMissionsPanel save={save} onClaim={onClaimMission} />
       <section className="idle-activity-panel" aria-labelledby="idle-activity-title">
         <div className="idle-utility-heading">
           <h2 id="idle-activity-title">Aktivitas Berjalan</h2>
@@ -520,8 +521,6 @@ function IdleUtilityRail({
           Offline: {Math.round(offlineEfficiency(save) * 100)}% laju · maksimal {offlineCapSeconds(save) / 3600} jam
         </p>
       </section>
-
-      <DailyMissionsPanel save={save} onClaim={onClaimMission} />
 
       <section className="idle-quick-panel" aria-labelledby="idle-quick-title">
         <div className="idle-utility-heading">

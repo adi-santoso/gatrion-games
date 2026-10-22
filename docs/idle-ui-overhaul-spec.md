@@ -86,7 +86,7 @@ Dokumen ini mengunci pemetaan produk dan interaksi untuk mengimplementasikan moc
 5. M5: peta zona turunan dari 10 tier.
 6. M6: inventory terlebih dahulu untuk state yang sudah ada, lalu material kayu/batu/herbal beserta sumber dan sink sebagai ekspansi ekonomi.
 7. M7: misi harian dan perekrutan setelah skema save dan aturan hadiah/efek jelas. Selesai: tiga misi (kristal, ketukan, pembangunan) memakai tanggal kalender lokal dan klaim sekali per hari; hadiahnya menambah saldo tanpa menggandakan statistik produksi. Tiga kru dibeli dengan kayu/batu/herbal, memberi efek putaran, dan direset saat lebur.
-8. M8: penyelarasan visual dan pemeriksaan regresi akhir.
+8. M8: penyelarasan visual dan pemeriksaan regresi akhir. Selesai: misi diposisikan di atas aktivitas sesuai hierarki mockup; kartu misi/kru diselaraskan ke panel game dan responsif. Build produksi berhasil dan 120 tes regresi lulus.
 
 ## 7. Kriteria penerimaan M0
 
