@@ -3560,6 +3560,15 @@
   text-shadow: 0 0 20px rgba(215, 244, 123, 0.52);
 }
 
+.mine-crystal-balance > small {
+  margin-top: 0.18rem;
+  color: #d7f47b;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+}
+
 .mine-scene-intro p {
   margin: 0.5rem 0 0.8rem;
   color: #edf1df;

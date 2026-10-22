@@ -206,6 +206,7 @@ export function IdlePage() {
           <section className="idle-stage">
             <ClickPad
               crystals={save.crystals}
+              rate={rate}
               gain={gain}
               tierName={topTier.name}
               sector={unlockedTiers.length}

@@ -10,6 +10,7 @@ interface Pop {
 
 interface Props {
   crystals: number;
+  rate: number;
   gain: number;
   tierName: string;
   sector: number;
@@ -19,7 +20,7 @@ interface Props {
   onTap: () => void;
 }
 
-export function ClickPad({ crystals, gain, tierName, sector, upgradeCost, canUpgrade, onUpgrade, onTap }: Props) {
+export function ClickPad({ crystals, rate, gain, tierName, sector, upgradeCost, canUpgrade, onUpgrade, onTap }: Props) {
   const [pops, setPops] = useState<Pop[]>([]);
   const nextId = useRef(0);
 
@@ -59,6 +60,7 @@ export function ClickPad({ crystals, gain, tierName, sector, upgradeCost, canUpg
         <div className="mine-crystal-balance" aria-live="polite">
           <span>KRISTAL TERKUMPUL</span>
           <strong data-testid="scene-crystals">{formatNumber(crystals)}</strong>
+          <small data-testid="scene-rate">+{formatNumber(rate)} kristal / detik</small>
         </div>
         <p>Kumpulkan kristal untuk memperkuat kerajaanmu.</p>
         <button type="button" disabled={!canUpgrade} onClick={onUpgrade}>
