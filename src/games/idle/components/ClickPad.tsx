@@ -10,13 +10,15 @@ interface Pop {
 
 interface Props {
   gain: number;
-  tierId: string;
   tierName: string;
   sector: number;
+  upgradeCost: number;
+  canUpgrade: boolean;
+  onUpgrade: () => void;
   onTap: () => void;
 }
 
-export function ClickPad({ gain, tierId, tierName, sector, onTap }: Props) {
+export function ClickPad({ gain, tierName, sector, upgradeCost, canUpgrade, onUpgrade, onTap }: Props) {
   const [pops, setPops] = useState<Pop[]>([]);
   const nextId = useRef(0);
 
@@ -50,6 +52,15 @@ export function ClickPad({ gain, tierId, tierName, sector, onTap }: Props) {
         <span className="mine-scene-live"><span /> AREA TAMBANG</span>
         <span className="mine-scene-sector">SEKTOR {String(sector).padStart(2, "0")} · {tierName.toUpperCase()}</span>
       </div>
+      <div className="mine-scene-intro">
+        <span className="mine-scene-intro-mark" aria-hidden="true">✧</span>
+        <h2>Tambang Kristal</h2>
+        <p>Kumpulkan kristal untuk memperkuat kerajaanmu.</p>
+        <button type="button" disabled={!canUpgrade} onClick={onUpgrade}>
+          <span>Tingkatkan</span>
+          <small>✦ {formatNumber(upgradeCost)}</small>
+        </button>
+      </div>
       <div id="pop-layer" className="mine-crystal-wrap">
         <span className="mine-orbit mine-orbit-one" aria-hidden="true" />
         <span className="mine-orbit mine-orbit-two" aria-hidden="true" />
@@ -62,7 +73,7 @@ export function ClickPad({ gain, tierId, tierName, sector, onTap }: Props) {
           <span className="mine-crystal-glow" aria-hidden="true" />
           <img
             className="core-icon"
-            src={`/icons/idle/${tierId}.png`}
+            src="/icons/idle/crystal-core.svg"
             alt=""
             width={64}
             height={64}
@@ -78,8 +89,8 @@ export function ClickPad({ gain, tierId, tierName, sector, onTap }: Props) {
         ))}
       </div>
       <div className="mine-scene-footer">
-        <span><i aria-hidden="true" /> INTI KRISTAL</span>
-        <span>KETUK UNTUK MENAMBANG</span>
+        <span><i aria-hidden="true" /> PRODUKSI OTOMATIS</span>
+        <span>Ketuk kristal untuk mendapat bonus.</span>
       </div>
     </div>
   );

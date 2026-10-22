@@ -30,8 +30,10 @@ describe("IdlePage", () => {
     seed();
     renderPage();
     expect(screen.getByTestId("crystals")).toHaveTextContent("100K");
-    expect(screen.getByTestId("rate")).toHaveTextContent("0.5/detik");
-    expect(screen.getByText(/menambang sendiri sejak detik pertama/)).toBeInTheDocument();
+    expect(screen.getByTestId("rate")).toHaveTextContent("0.5/dtk");
+    expect(screen.getByRole("heading", { name: "Bangunan" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Riset Teknologi" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Inventory" })).toBeInTheDocument();
   });
 
   it("menampilkan tier terkunci dan hint pembukaannya", () => {
@@ -40,6 +42,13 @@ describe("IdlePage", () => {
     const locked = document.querySelector('[data-gen="drill"]');
     expect(locked).toHaveAttribute("data-unlocked", "false");
     expect(locked).toHaveTextContent(/butuh 5 Pencungkil/);
+  });
+
+  it("membeli generator langsung dari panel Bangunan di Home", async () => {
+    seed({ auto: false, crystals: 100_000 });
+    renderPage();
+    fireEvent.click(document.querySelector('.idle-home-building-card[data-home-gen="pick"] button') as HTMLButtonElement);
+    await waitFor(() => expect(stored().gens.pick).toBe(2));
   });
 
   it("klik tetap memberi bonus manual", async () => {
@@ -58,6 +67,8 @@ describe("IdlePage", () => {
     seed({ auto: false });
     renderPage();
 
+    fireEvent.click(screen.getByRole("button", { name: "Semua →" }));
+
     fireEvent.click(screen.getByRole("button", { name: "x10" }));
     const row = document.querySelector('[data-gen="pick"]') as HTMLButtonElement;
     expect(row).toHaveTextContent("×10");
@@ -74,7 +85,7 @@ describe("IdlePage", () => {
     seed({ auto: false });
     renderPage();
 
-    fireEvent.click(screen.getByRole("button", { name: "riset" }));
+    fireEvent.click(document.querySelector('[data-nav="upgrade"]') as HTMLButtonElement);
 
     const gear = document.querySelector('[data-upgrade="gear"]') as HTMLButtonElement;
     expect(gear).not.toBeDisabled();
@@ -90,12 +101,13 @@ describe("IdlePage", () => {
     seed({ crystals: 100_000, auto: false });
     renderPage();
 
+    fireEvent.click(screen.getByRole("button", { name: "Bangun" }));
     fireEvent.click(document.querySelector('[data-material-building="wood"]') as HTMLButtonElement);
     await waitFor(() => expect(stored().materialBuildings.wood).toBe(1));
     fireEvent.click(screen.getByRole("button", { name: "Inventory" }));
 
     await waitFor(
-      () => expect(document.querySelector('[data-resource="wood"]')).toHaveTextContent("0.5"),
+      () => expect(document.querySelector(".inventory-overview [data-resource=\"wood\"]")).toHaveTextContent("+0.5/dtk"),
       { timeout: 3000 },
     );
   });
@@ -125,6 +137,7 @@ describe("IdlePage", () => {
     };
     seed({ crystals: 1000, auto: false, dailyMissions });
     renderPage();
+    fireEvent.click(screen.getByText("Complete 3 tasks"));
     const mission = document.querySelector('[data-mission="crystals"]') as HTMLElement;
     fireEvent.click(within(mission).getByRole("button", { name: "Klaim" }));
     await waitFor(() => {
@@ -209,6 +222,7 @@ describe("IdlePage", () => {
 
     expect(document.querySelector('[data-gen="pick"]')).toBeInTheDocument();
 
+    fireEvent.click(screen.getByRole("button", { name: "Inventory" }));
     fireEvent.click(screen.getByRole("button", { name: "lebur" }));
     expect(document.querySelector('[data-core="spark"]')).toBeInTheDocument();
     expect(document.querySelector('[data-gen="pick"]')).not.toBeInTheDocument();

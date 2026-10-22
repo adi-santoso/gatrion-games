@@ -146,7 +146,7 @@ Implementasi: versi save naik ke 5; save v4 mempertahankan saldo/bangunan/upgrad
 - Periksa kontras, fokus keyboard, target sentuh, pembacaan layar, reduced motion, dan pemotongan konten.
 - Lakukan pemeriksaan regresi untuk alur idle, save lama, migrasi, offline, dan layar kecil.
 
-Implementasi akhir: panel misi ditempatkan di atas aktivitas berjalan mengikuti hierarki mockup. Kartu progres misi dan kru diberi framing, warna aksen, serta aturan kolom responsif yang konsisten dengan panel Bangunan/Riset/Inventory. Pemeriksaan build dan suite regresi mencakup idle, material, save/migrasi, misi, kru, peta, peleburan, serta offline.
+Implementasi akhir: Home menampilkan scene lebar penuh dengan HUD pemain/sumber daya di atas, rail misi/aktivitas/aksi cepat di atas sisi kanan scene, dan empat panel overview aktif yang tampil bersamaan di bawah. Kartu bangunan, riset, peta, dan Inventory memakai state ekonomi yang sama dengan halaman detail. Portrait penambang dicrop dari referensi mockup dan kristal utama memakai aset vektor baru. Kartu misi/kru diberi framing dan aturan kolom responsif. Pemeriksaan build dan suite regresi mencakup idle, material, save/migrasi, misi, kru, peta, peleburan, serta offline.
 
 **Masih bisa dimainkan:** seluruh loop utama selesai dari awal hingga peleburan, lalu dapat dimainkan lagi dengan upgrade permanen; semua panel pada mockup memiliki konten/aksi yang berfungsi.
 

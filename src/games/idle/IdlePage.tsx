@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { ThemeToggle } from "../../components/ThemeToggle";
 import { Toast } from "../../components/Toast";
-import { formatDuration, formatNumber } from "../../lib/format";
+import { formatNumber } from "../../lib/format";
 import { AchievementsList } from "./components/AchievementsList";
 import { AutoSection } from "./components/AutoSection";
 import { CharacterPanel } from "./components/CharacterPanel";
@@ -12,6 +12,7 @@ import { DailyMissionsPanel } from "./components/DailyMissionsPanel";
 import { CoreGlyph, CrystalGlyph, FlaskGlyph } from "./components/Glyphs";
 import { MaterialBuildingsPanel } from "./components/MaterialBuildingsPanel";
 import { InventoryPanel } from "./components/InventoryPanel";
+import { IdleHomePanels } from "./components/IdleHomePanels";
 import { OfflineDialog } from "./components/OfflineDialog";
 import { PrestigeDialog } from "./components/PrestigeDialog";
 import { PrestigePanel } from "./components/PrestigePanel";
@@ -22,6 +23,7 @@ import {
   ACHIEVEMENTS,
   GENERATORS,
   MATERIAL_BUILDINGS,
+  TIER_UNLOCK_REQUIRED,
   clickGain,
   clickUpgradeCost,
   coreGain,
@@ -29,7 +31,6 @@ import {
   offlineCapSeconds,
   offlineEfficiency,
   production,
-  unlockHint,
 } from "./economy";
 import { useIdleGame } from "./useIdleGame";
 import type { BuyAmount, DailyMissionId, IdleSave } from "./types";
@@ -42,7 +43,7 @@ const BUY_OPTIONS: Array<{ value: BuyAmount; label: string }> = [
 
 const MATERIAL_MARKS = { wood: "♧", stone: "⬟", herb: "❧" } as const;
 
-type TabId = "mine" | "research" | "prestige" | "archive" | "map" | "character";
+type TabId = "home" | "mine" | "research" | "prestige" | "archive" | "map" | "character";
 type DestinationId = "home" | "character" | "inventory" | "upgrade" | "map" | "settings";
 
 const DESTINATIONS: Array<{
@@ -70,7 +71,7 @@ export function IdlePage() {
   const idle = useIdleGame();
   const { save } = idle;
   const [prestigeOpen, setPrestigeOpen] = useState(false);
-  const [tab, setTab] = useState<TabId>("mine");
+  const [tab, setTab] = useState<TabId>("home");
   const [destination, setDestination] = useState<DestinationId>("home");
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -92,7 +93,7 @@ export function IdlePage() {
     setSettingsOpen(false);
     if (next === "inventory") setTab("archive");
     if (next === "upgrade") setTab("research");
-    if (next === "home") setTab("mine");
+    if (next === "home") setTab("home");
     if (next === "character") setTab("character");
     if (next === "map") setTab("map");
 
@@ -109,7 +110,7 @@ export function IdlePage() {
   const setPanelTab = (next: TabId) => {
     setTab(next);
     setSettingsOpen(false);
-    setDestination(next === "archive" ? "inventory" : next === "mine" ? "home" : next === "map" ? "map" : next === "character" ? "character" : "upgrade");
+    setDestination(next === "home" ? "home" : next === "archive" ? "inventory" : next === "mine" ? "home" : next === "map" ? "map" : next === "character" ? "character" : "upgrade");
   };
 
   const enterMapZone = (generatorId: string) => {
@@ -200,111 +201,58 @@ export function IdlePage() {
       </aside>
 
       <div className="idle-workspace">
-        <header className="idle-workspace-header">
-          <div>
-            <span className="idle-eyebrow">GATRION / IDLE</span>
-            <h1>Tambang Kristal</h1>
-          </div>
-          <span className="idle-workspace-status"><i aria-hidden="true" /> Dunia tersimpan otomatis</span>
-        </header>
-
         <main className="idle-main">
         <div id="idle-dashboard" className="idle-cabinet">
-          <div className="idle-top">
-            <div className="flex items-baseline gap-2">
-              <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink">
-                tambang kristal
-              </span>
-              <span className="mono text-[9px] text-muted">sektor {String(unlockedTiers.length).padStart(2, "0")}</span>
-            </div>
-
-            <div className="idle-hud">
-              <span className="idle-chip" data-tone="accent">
-                <CrystalGlyph />
-                <strong data-testid="hud-crystals">{formatNumber(save.crystals)}</strong>
-                <span>kristal</span>
-                <span className="mono text-lime">+{formatNumber(rate)}/dtk</span>
-              </span>
-              <span className="idle-chip" data-tone="accent">
-                <CoreGlyph />
-                <strong data-testid="cores">{formatNumber(save.cores)}</strong>
-                <span>inti</span>
-                <button
-                  type="button"
-                  className="chip-action"
-                  data-action="prestige"
-                  aria-label={canPrestige ? "Lebur putaran ini" : "Peleburan belum tersedia"}
-                  disabled={!canPrestige}
-                  onClick={() => setPrestigeOpen(true)}
-                >
-                  {canPrestige ? `+${formatNumber(pendingCores)}` : "lebur"}
-                </button>
-              </span>
-              {MATERIAL_BUILDINGS.filter((building) => save.materialBuildings[building.id] > 0).map((building) => (
-                <span key={building.id} className="idle-chip" data-resource={building.id}>
-                  <span aria-hidden="true">{MATERIAL_MARKS[building.id]}</span>
-                  <strong>{formatNumber(save.materials[building.id])}</strong>
-                  <span>{building.materialName}</span>
-                </span>
-              ))}
-              <span className="idle-chip">
-                tier <strong>{unlockedTiers.length}</strong>/{GENERATORS.length}
-              </span>
-              <span className="idle-chip" data-tone={save.auto ? "live" : "idle"}>
-                <span className="lamp" aria-hidden="true" />
-                {save.auto ? "mandor aktif" : "mandor mati"}
-              </span>
-            </div>
-          </div>
-
           <section className="idle-stage">
             <ClickPad
               gain={gain}
-              tierId={topTier.id}
               tierName={topTier.name}
               sector={unlockedTiers.length}
+              upgradeCost={upgradeCost}
+              canUpgrade={canUpgrade}
+              onUpgrade={idle.buyClickUpgrade}
               onTap={idle.tap}
             />
 
-            <div className="idle-info-rail">
-              <div className="idle-score">
-              <div className="flex items-center justify-between gap-3">
-                <span className="panel-title flex items-center gap-1.5">
+            <div className="idle-home-top">
+              <div className="idle-player-progress">
+                <span className="idle-player-avatar" aria-hidden="true">
+                  <img src="/images/idle/miner-avatar.png" alt="" width="48" height="48" />
+                </span>
+                <span className="idle-player-copy">
+                  <strong>Lv. {unlockedTiers.length} · PENAMBANG</strong>
+                  <span className="idle-player-progress-track"><i style={{ width: `${Math.min(100, ((save.gens[topTier.id] ?? 0) / TIER_UNLOCK_REQUIRED) * 100)}%` }} /></span>
+                  <small>{nextTier ? `${save.gens[topTier.id] ?? 0} / ${TIER_UNLOCK_REQUIRED} · ${nextTier.name}` : "Seluruh sektor terbuka"}</small>
+                </span>
+              </div>
+              <div className="idle-hud">
+                <span className="idle-chip" data-tone="accent">
                   <CrystalGlyph />
-                  kristal
+                  <strong data-testid="crystals"><span data-testid="hud-crystals">{formatNumber(save.crystals)}</span></strong>
+                  <span>kristal</span>
+                  <span data-testid="rate" className="mono text-lime">+{formatNumber(rate)}/dtk</span>
                 </span>
-                <span className="mono text-[10px] text-muted">
-                  sesi {formatDuration(Date.now() - save.startedAt)}
+                <span className="idle-chip" data-tone="accent">
+                  <CoreGlyph />
+                  <strong data-testid="cores">{formatNumber(save.cores)}</strong>
+                  <span>inti</span>
+                  <button type="button" className="chip-action" data-action="prestige" aria-label={canPrestige ? "Lebur putaran ini" : "Peleburan belum tersedia"} disabled={!canPrestige} onClick={() => setPrestigeOpen(true)}>
+                    {canPrestige ? `+${formatNumber(pendingCores)}` : "lebur"}
+                  </button>
                 </span>
-              </div>
-              <div data-testid="crystals" className="display idle-score-value mt-1">
-                {formatNumber(save.crystals)}
-              </div>
-              <div className="mono mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted">
-                <span data-testid="rate" className="text-lime">
-                  +{formatNumber(rate)}/detik
-                </span>
-                <span className="text-muted/40">·</span>
-                <span>menambang sendiri sejak detik pertama</span>
-              </div>
-
-              <DepthStrip save={save} />
-
-              <div className="next-tier-card">
-                <div className="next-tier-copy">
-                  <span className="panel-title">berikutnya</span>
-                  <strong>{nextTier ? nextTier.name : "Semua tier terbuka"}</strong>
-                  <span className="mono text-[10px] text-muted">
-                    {nextTier ? unlockHint(save, nextTier) : "Kamu telah mencapai seluruh generator."}
+                {MATERIAL_BUILDINGS.filter((building) => save.materialBuildings[building.id] > 0).map((building) => (
+                  <span key={building.id} className="idle-chip" data-resource={building.id}>
+                    <span aria-hidden="true">{MATERIAL_MARKS[building.id]}</span>
+                    <strong>{formatNumber(save.materials[building.id])}</strong>
+                    <span>{building.materialName}</span>
                   </span>
-                </div>
-                <span className="next-tier-action" aria-hidden="true">↗</span>
+                ))}
+                <span className="idle-chip">tier <strong>{unlockedTiers.length}</strong>/{GENERATORS.length}</span>
+                <span className="idle-chip" data-tone={save.auto ? "live" : "idle"}><span className="lamp" aria-hidden="true" />{save.auto ? "mandor aktif" : "mandor mati"}</span>
               </div>
-              <div className="mono mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[10px] text-muted">
-                <span>Produksi tetap berjalan saat kamu pergi.</span>
-                <span className="text-muted/70">ketuk inti = bonus, tidak wajib</span>
-              </div>
-              </div>
+            </div>
+
+            <div className="idle-home-activity">
               <IdleUtilityRail
                 save={save}
                 rate={rate}
@@ -319,6 +267,16 @@ export function IdlePage() {
             </div>
           </section>
 
+          {tab === "home" ? (
+            <IdleHomePanels
+              save={save}
+              onBuy={idle.buy}
+              onUpgrade={idle.buyRunUpgrade}
+              onMaterialUpgrade={idle.buyMaterialUpgrade}
+              onEnterZone={enterMapZone}
+              onOpen={setPanelTab}
+            />
+          ) : <>
           <div className="tab-bar" role="group" aria-label="Panel tambang">
             {TABS.map((item) => (
               <button
@@ -422,6 +380,7 @@ export function IdlePage() {
                 </section>
               )}
           </div>
+          </>}
         </div>
         </main>
 
@@ -438,27 +397,6 @@ export function IdlePage() {
           />
         )}
       </div>
-    </div>
-  );
-}
-
-function DepthStrip({ save }: { save: IdleSave }) {
-  return (
-    <div id="depth-map" className="depth">
-      {GENERATORS.map((generator, index) => {
-        const owned = save.gens[generator.id] ?? 0;
-        const on = isUnlocked(save, generator);
-        return (
-          <span
-            key={generator.id}
-            className="depth-seg"
-            data-on={on ? "true" : "false"}
-            title={`${generator.name} · ${owned} unit`}
-          >
-            {owned > 0 ? owned : index + 1}
-          </span>
-        );
-      })}
     </div>
   );
 }

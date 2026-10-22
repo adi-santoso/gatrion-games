@@ -5,6 +5,7 @@ Dokumen ini mengunci pemetaan produk dan interaksi untuk mengimplementasikan moc
 ## 1. Sasaran dan prinsip
 
 - Sasaran visual desktop adalah komposisi mockup: navigasi kiri, HUD sumber daya di atas, scene dunia sebagai fokus, panel aktivitas dan aksi cepat di sisi kanan, serta dashboard Bangunan, Riset, Peta Dunia, dan Inventory di bawah.
+- Home menjadi overview utama, bukan satu tab detail: scene memakai lebar konten penuh; HUD pemain dan sumber daya berada di atas scene; Daily Mission, Aktivitas Berjalan, dan Quick Actions mengambang di sisi kanan; empat panel overview tampil bersamaan di bawah dan memakai state ekonomi yang sama dengan halaman detail.
 - Di layar kecil, komposisi yang sama berubah menjadi satu kolom dengan HUD yang dapat digeser/dibungkus, navigasi bawah atau menu ringkas, scene lebih pendek, lalu panel-panel dalam tab. Tidak ada fungsi yang hanya dapat diakses dengan hover.
 - Ekonomi kristal, 10 tier generator, tap bonus, mandor, dua riset putaran, peleburan, upgrade permanen, offline progress, dan pencapaian tetap menjadi loop dasar.
 - Setiap penghitung dan aksi di UI membaca atau mengubah state permainan nyata. Panel boleh diringkas, tetapi tidak boleh berisi data contoh setelah dirilis.

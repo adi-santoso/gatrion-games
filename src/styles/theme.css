@@ -3328,3 +3328,901 @@
     min-height: 0;
   }
 }
+
+/* Home view: match the mockup's full-width scene and four live dashboard panels. */
+.idle-layout {
+  grid-template-columns: 156px minmax(0, 1fr);
+}
+
+.idle-main {
+  width: 100%;
+  max-width: none;
+  padding: 0.55rem;
+}
+
+.idle-cabinet {
+  max-width: none;
+}
+
+.idle-cabinet .idle-stage {
+  min-height: 570px;
+  grid-template-columns: minmax(0, 1.8fr) minmax(320px, 0.78fr);
+  gap: 0.7rem;
+  padding: 0.55rem;
+  border: 1px solid rgba(151, 194, 123, 0.16);
+  border-radius: 14px;
+  background: #101a12;
+}
+
+.idle-cabinet .mine-scene {
+  min-height: 555px;
+  border: 0;
+  border-radius: 11px;
+  background-position: center 50%;
+}
+
+.idle-home-top {
+  position: absolute;
+  z-index: 8;
+  top: 0.9rem;
+  right: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  pointer-events: none;
+}
+
+.idle-player-progress {
+  display: flex;
+  width: min(310px, 32%);
+  min-width: 215px;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.65rem 0.45rem 0.45rem;
+  border: 1px solid rgba(173, 212, 153, 0.27);
+  border-radius: 11px;
+  background: rgba(9, 18, 12, 0.78);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(12px);
+}
+
+.idle-player-avatar {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(200, 243, 106, 0.48);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 243, 106, 0.18), rgba(13, 25, 15, 0.9) 72%);
+}
+
+.idle-player-avatar img {
+  width: 37px;
+  height: 37px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 7px rgba(200, 243, 106, 0.2));
+}
+
+.idle-player-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.22rem;
+}
+
+.idle-player-copy strong {
+  overflow: hidden;
+  color: #eef7e6;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.045em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idle-player-copy small {
+  overflow: hidden;
+  color: #acbb9f;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idle-player-progress-track {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(222, 237, 211, 0.16);
+}
+
+.idle-player-progress-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8ab944, #d4f778);
+  box-shadow: 0 0 10px rgba(200, 243, 106, 0.38);
+}
+
+.idle-home-top .idle-hud {
+  justify-content: flex-end;
+  gap: 0.45rem;
+  pointer-events: auto;
+}
+
+.idle-home-top .idle-chip {
+  min-height: 38px;
+  border-color: rgba(151, 194, 123, 0.22);
+  border-radius: 999px;
+  background: rgba(9, 18, 12, 0.82);
+  padding: 0.42rem 0.7rem;
+  color: #cfdbc8;
+  backdrop-filter: blur(12px);
+}
+
+.idle-home-top .idle-chip[data-tone="accent"] {
+  background: rgba(9, 18, 12, 0.88);
+}
+
+.idle-home-top .idle-chip strong {
+  font-size: 0.7rem;
+}
+
+.idle-home-activity {
+  position: relative;
+  z-index: 5;
+  min-width: 0;
+  padding-top: 4.5rem;
+}
+
+.idle-home-activity .idle-utility-column {
+  gap: 0.55rem;
+}
+
+.idle-home-activity .idle-activity-panel,
+.idle-home-activity .idle-quick-panel {
+  padding: 0.62rem;
+  border-radius: 10px;
+  background: rgba(10, 21, 13, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.idle-cabinet .mine-scene-label {
+  top: auto;
+  right: auto;
+  bottom: 0.8rem;
+  left: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  font-size: 0.55rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.idle-cabinet .mine-scene-intro {
+  position: absolute;
+  z-index: 4;
+  top: 30%;
+  left: 7%;
+  width: min(290px, 39%);
+  color: #f2f7e8;
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.72);
+}
+
+.mine-scene-intro-mark {
+  color: #d7f47b;
+  font-size: 1.5rem;
+}
+
+.mine-scene-intro h2 {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.1vw, 2rem);
+  font-weight: 750;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.mine-scene-intro p {
+  margin: 0.4rem 0 0.8rem;
+  color: #edf1df;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.mine-scene-intro button {
+  display: flex;
+  min-width: 190px;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(213, 250, 129, 0.75);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(105, 161, 49, 0.94), rgba(59, 105, 31, 0.97));
+  color: #f5ffe4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px rgba(255, 255, 255, 0.16);
+  cursor: pointer;
+}
+
+.mine-scene-intro button:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.mine-scene-intro button:disabled {
+  filter: grayscale(0.6);
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+.mine-scene-intro button span {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.mine-scene-intro button small {
+  padding: 0.14rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(8, 18, 10, 0.35);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+}
+
+.idle-cabinet .mine-crystal-wrap {
+  position: absolute;
+  bottom: 18%;
+  left: 27%;
+  width: 170px;
+  height: 170px;
+  margin: 0;
+}
+
+.idle-cabinet .mine-crystal {
+  width: 140px;
+  height: 160px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.idle-cabinet .mine-crystal:hover {
+  box-shadow: none;
+}
+
+.idle-cabinet .mine-crystal .core-icon {
+  width: 86px;
+  height: 86px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: 0 0 32px rgba(107, 196, 255, 0.62), 0 10px 20px rgba(0, 0, 0, 0.32);
+}
+
+.idle-cabinet .mine-crystal .core-tier,
+.idle-cabinet .mine-crystal .core-bonus {
+  display: none;
+}
+
+.idle-home-panels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.6rem;
+}
+
+.idle-home-panel {
+  min-width: 0;
+  height: 390px;
+  overflow: hidden;
+  border: 1px solid rgba(120, 152, 101, 0.24);
+  border-radius: 10px;
+  background: linear-gradient(155deg, #17231a, #101810 78%);
+  box-shadow: inset 0 1px rgba(237, 249, 225, 0.045), 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+.idle-home-panel-heading,
+.idle-home-panel .world-map-heading {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid rgba(151, 194, 123, 0.13);
+}
+
+.idle-home-panel-heading h2,
+.idle-home-panel .panel-title {
+  margin: 0;
+  color: #e4ecdc;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 650;
+}
+
+.idle-home-panel-heading button {
+  border: 0;
+  background: transparent;
+  color: #a9c980;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  cursor: pointer;
+}
+
+.idle-home-building-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  max-height: 345px;
+  overflow: auto;
+  padding: 0.45rem;
+}
+
+.idle-home-building-card {
+  display: flex;
+  min-width: 0;
+  min-height: 156px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.45rem;
+  border: 1px solid rgba(151, 194, 123, 0.17);
+  border-radius: 7px;
+  background: rgba(5, 13, 7, 0.38);
+}
+
+.idle-home-building-art {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.idle-home-building-art img {
+  width: 43px;
+  height: 43px;
+  object-fit: contain;
+}
+
+.idle-home-building-art span {
+  padding: 0.16rem 0.3rem;
+  border: 1px solid rgba(151, 194, 123, 0.2);
+  border-radius: 4px;
+  color: #bdd19e;
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+}
+
+.idle-home-building-card > strong {
+  overflow: hidden;
+  width: 100%;
+  margin-top: 0.25rem;
+  color: #e7efdf;
+  font-size: 0.57rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idle-home-building-card > small {
+  display: -webkit-box;
+  min-height: 1.5rem;
+  overflow: hidden;
+  margin-top: 0.18rem;
+  color: #9aaa91;
+  font-size: 0.48rem;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.idle-home-building-card > button {
+  width: 100%;
+  min-height: 25px;
+  margin-top: auto;
+  padding: 0.2rem;
+  border: 1px solid rgba(151, 194, 123, 0.24);
+  border-radius: 5px;
+  background: rgba(200, 243, 106, 0.07);
+  color: #cfe4b6;
+  font-family: var(--font-mono);
+  font-size: 0.46rem;
+  cursor: pointer;
+}
+
+.idle-home-building-card > button:disabled {
+  border-color: rgba(151, 194, 123, 0.12);
+  background: rgba(5, 13, 7, 0.22);
+  color: #87927f;
+  cursor: not-allowed;
+}
+
+.idle-home-research .research-grid {
+  display: grid;
+  gap: 0.4rem;
+  max-height: 345px;
+  overflow: auto;
+  padding: 0.45rem;
+}
+
+.idle-home-research .research-card {
+  padding: 0.55rem;
+  border-radius: 7px;
+  background: rgba(5, 13, 7, 0.38);
+}
+
+.idle-home-research .research-card-effect {
+  margin: 0.35rem 0;
+  font-size: 0.55rem;
+}
+
+.idle-home-research .research-card-heading {
+  gap: 0.38rem;
+}
+
+.idle-home-research .research-card-icon {
+  width: 27px;
+  height: 27px;
+}
+
+.idle-home-research .research-card-title h3 {
+  font-size: 0.59rem;
+}
+
+.idle-home-research .research-card-eyebrow,
+.idle-home-research .research-card-level,
+.idle-home-research .research-card-scope {
+  font-size: 0.44rem;
+}
+
+.idle-home-research .research-card-footer button {
+  min-height: 24px;
+  padding: 0.2rem 0.35rem;
+  font-size: 0.48rem;
+}
+
+.idle-home-map .world-map-panel {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.idle-home-map .world-map-heading {
+  min-height: 42px;
+}
+
+.idle-home-map .world-map-heading p {
+  font-size: 0.43rem;
+}
+
+.idle-home-map .world-map-canvas {
+  height: 220px;
+  min-height: 220px;
+  margin: 0.4rem;
+}
+
+.idle-home-map .world-map-zone-marker {
+  width: 25px;
+  height: 25px;
+}
+
+.idle-home-map .world-map-zone-marker img {
+  width: 18px;
+  height: 18px;
+}
+
+.idle-home-map .world-map-zone small {
+  font-size: 0.42rem;
+}
+
+.idle-home-map .world-map-caption {
+  font-size: 0.43rem;
+}
+
+.idle-home-map .world-map-detail {
+  gap: 0.35rem;
+  margin: 0.4rem;
+  padding: 0.4rem;
+}
+
+.idle-home-map .world-map-detail-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.idle-home-map .world-map-detail-icon img {
+  width: 28px;
+  height: 28px;
+}
+
+.idle-home-map .world-map-detail h3 {
+  font-size: 0.58rem;
+}
+
+.idle-home-map .world-map-detail p,
+.idle-home-map .world-map-detail-kicker {
+  font-size: 0.44rem;
+}
+
+.idle-home-map .world-map-detail > button {
+  min-height: 28px;
+  padding: 0.25rem;
+  font-size: 0.46rem;
+}
+
+.idle-home-inventory .inventory-overview {
+  height: calc(100% - 42px);
+  overflow: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.idle-home-inventory .inventory-heading {
+  display: none;
+}
+
+.idle-home-inventory .inventory-resource-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.45rem;
+}
+
+.idle-home-inventory .inventory-resource-card {
+  grid-template-columns: 25px minmax(0, 1fr);
+  gap: 0.25rem;
+  min-height: 67px;
+  padding: 0.38rem;
+}
+
+.idle-home-inventory .inventory-resource-mark {
+  width: 23px;
+  height: 23px;
+  font-size: 0.8rem;
+}
+
+.idle-home-inventory .inventory-resource-card strong {
+  grid-column: 2;
+  font-size: 0.62rem;
+}
+
+.idle-home-inventory .inventory-resource-card small {
+  font-size: 0.43rem;
+}
+
+.idle-home-inventory .inventory-material-section {
+  padding: 0.45rem;
+}
+
+.idle-home-inventory .inventory-upgrade-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.35rem;
+}
+
+.idle-home-inventory .inventory-upgrade-card {
+  padding: 0.45rem;
+}
+
+.idle-home-inventory .inventory-upgrade-card p {
+  margin: 0.25rem 0;
+  font-size: 0.5rem;
+}
+
+.idle-home-inventory .inventory-upgrade-card button {
+  min-height: 26px;
+  padding: 0.25rem;
+  font-size: 0.45rem;
+}
+
+@media (max-width: 1120px) {
+  .idle-home-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 880px) {
+  .idle-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .idle-cabinet .idle-stage {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 6.6rem;
+  }
+
+  .idle-home-top {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    left: 0.7rem;
+  }
+
+  .idle-player-progress {
+    width: 250px;
+    min-width: 170px;
+  }
+
+  .idle-home-activity {
+    padding-top: 0;
+  }
+
+  .idle-home-activity .idle-utility-column {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .idle-main {
+    padding: 0.4rem;
+  }
+
+  .idle-cabinet .idle-stage {
+    padding-top: 10.4rem;
+  }
+
+  .idle-cabinet .mine-scene {
+    min-height: 350px;
+  }
+
+  .idle-home-top {
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .idle-player-progress {
+    width: min(100%, 280px);
+  }
+
+  .idle-home-top .idle-hud {
+    justify-content: flex-start;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  .idle-home-top .idle-chip {
+    flex: 0 0 auto;
+  }
+
+  .idle-home-activity .idle-utility-column {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .idle-cabinet .mine-scene-intro {
+    top: 16%;
+    left: 5%;
+    width: 58%;
+  }
+
+  .idle-cabinet .mine-crystal-wrap {
+    right: 7%;
+    bottom: 15%;
+    left: auto;
+    transform: scale(0.82);
+    transform-origin: center;
+  }
+
+  .idle-home-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .idle-home-panel {
+    height: 360px;
+  }
+}
+
+/* The mockup's utility rail sits on top of one shared world scene. */
+@media (min-width: 641px) {
+  .idle-cabinet .idle-stage {
+    display: block;
+    min-height: 500px;
+    padding: 0;
+  }
+
+  .idle-cabinet .mine-scene {
+    width: 100%;
+    min-height: 498px;
+  }
+
+  .idle-home-activity {
+    position: absolute;
+    top: 4.6rem;
+    right: 0.8rem;
+    width: min(350px, 31%);
+    padding-top: 0;
+  }
+}
+
+.idle-player-avatar img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.idle-cabinet .mine-scene-label {
+  display: none;
+}
+
+.idle-cabinet .mine-scene-footer {
+  right: auto;
+  bottom: 0.85rem;
+  left: 1rem;
+  width: min(65%, 520px);
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(208, 231, 189, 0.15);
+  border-radius: 8px;
+  background: rgba(9, 18, 12, 0.78);
+  color: #dce6d3;
+  font-size: 0.52rem;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(8px);
+}
+
+.idle-cabinet .idle-home-activity .idle-utility-column {
+  gap: 0.45rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-activity-panel,
+.idle-cabinet .idle-home-activity .idle-quick-panel {
+  padding: 0.5rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-daily-panel > p {
+  margin-bottom: 0.3rem;
+  font-size: 0.46rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-daily-list {
+  gap: 0.28rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-daily-card {
+  padding: 0.32rem 0.42rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-daily-card > div:last-child {
+  margin-top: 0.18rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-daily-details > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.idle-cabinet .idle-home-activity .idle-daily-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.idle-daily-mark {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.36);
+  border-radius: 8px;
+  background: rgba(200, 243, 106, 0.08);
+  color: #d8f69c;
+  font-size: 1rem;
+}
+
+.idle-daily-summary-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.idle-daily-summary-copy strong {
+  color: #e5efdc;
+  font-size: 0.62rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-daily-progress {
+  height: 4px;
+  margin: 0;
+}
+
+.idle-cabinet .idle-home-activity .idle-daily-progress > i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8ab944, #d4f778);
+}
+
+.idle-daily-summary-count {
+  color: #c5d6b8;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+}
+
+.idle-daily-reset {
+  margin: 0.4rem 0 0.3rem;
+  color: #95a28f;
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+}
+
+.idle-daily-details:not([open]) .idle-daily-reset,
+.idle-daily-details:not([open]) .idle-daily-list {
+  display: none;
+}
+
+.idle-cabinet .mine-crystal .core-icon {
+  width: 128px;
+  height: 144px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(63, 191, 255, 0.52));
+}
+
+.idle-cabinet .idle-home-activity .idle-activity-row {
+  padding: 0.4rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-activity-panel #auto {
+  margin-top: 0.32rem;
+  padding: 0.4rem;
+}
+
+.idle-cabinet .idle-home-activity .idle-quick-grid button {
+  min-height: 48px;
+}
+
+.idle-cabinet .idle-home-activity .idle-quick-hint {
+  display: none;
+}
+
+@media (max-width: 880px) and (min-width: 641px) {
+  .idle-cabinet .idle-stage {
+    min-height: 500px;
+  }
+
+  .idle-cabinet .mine-scene {
+    min-height: 498px;
+  }
+
+  .idle-home-activity {
+    top: 4.3rem;
+    right: 0.65rem;
+    width: min(320px, 36%);
+  }
+
+  .idle-home-activity .idle-utility-column {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .idle-cabinet .idle-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 10.2rem 0.45rem 0.5rem;
+  }
+
+  .idle-cabinet .mine-scene {
+    min-height: 345px;
+  }
+
+  .idle-home-activity {
+    position: static;
+    width: auto;
+  }
+
+  .idle-cabinet .mine-scene-footer {
+    width: calc(100% - 2rem);
+  }
+}
