@@ -80,6 +80,7 @@ export function useIdleGame() {
   const [saveStatus, setSaveStatus] = useState("menunggu…");
 
   const saveRef = useRef(save);
+  const lastFrameAt = useRef(0);
   const toastId = useRef(0);
   const knownAch = useRef<string[]>(initial.save.ach);
 
@@ -105,58 +106,62 @@ export function useIdleGame() {
   // ------------------------------------------------------------ production loop
   useEffect(() => {
     let frame = 0;
-    let last = performance.now();
+    lastFrameAt.current = performance.now();
     let accumulated = 0;
     let materialElapsed = 0;
     const accruedMaterials = emptyMaterialBag();
 
     const tick = (now: number) => {
-      const dt = Math.min(5, (now - last) / 1000);
-      last = now;
+      const dt = document.visibilityState === "visible"
+        ? Math.min(5, (now - lastFrameAt.current) / 1000)
+        : 0;
+      lastFrameAt.current = now;
 
-      const current = saveRef.current;
-      const rate = production(current);
-      if (rate > 0) {
-        accumulated += rate * dt;
-        while (accumulated >= 1) {
-          const gain = Math.floor(accumulated);
-          accumulated -= gain;
+      if (dt > 0) {
+        const current = saveRef.current;
+        const rate = production(current);
+        if (rate > 0) {
+          accumulated += rate * dt;
+          while (accumulated >= 1) {
+            const gain = Math.floor(accumulated);
+            accumulated -= gain;
+            setSave((previous) => {
+              let next: IdleSave = {
+                ...previous,
+                crystals: previous.crystals + gain,
+                total: previous.total + gain,
+                allTime: Math.max(previous.allTime, previous.total + gain),
+                best: Math.max(previous.best, previous.crystals + gain),
+              };
+              next = addDailyMissionProgress(next, "crystals", gain);
+              next = { ...next, v: SAVE_VERSION };
+              saveIdleSave(next);
+              saveRef.current = next;
+              return next;
+            });
+          }
+        }
+
+        const rates = materialRates(current);
+        for (const id of MATERIAL_IDS) accruedMaterials[id] += rates[id] * dt;
+        materialElapsed += dt;
+        if (materialElapsed >= 1 && MATERIAL_IDS.some((id) => accruedMaterials[id] > 0)) {
+          const gain = { ...accruedMaterials };
+          for (const id of MATERIAL_IDS) accruedMaterials[id] = 0;
+          materialElapsed = 0;
           setSave((previous) => {
-            let next: IdleSave = {
+            const next: IdleSave = {
               ...previous,
-              crystals: previous.crystals + gain,
-              total: previous.total + gain,
-              allTime: Math.max(previous.allTime, previous.total + gain),
-              best: Math.max(previous.best, previous.crystals + gain),
+              materials: {
+                wood: previous.materials.wood + gain.wood,
+                stone: previous.materials.stone + gain.stone,
+                herb: previous.materials.herb + gain.herb,
+              },
             };
-            next = addDailyMissionProgress(next, "crystals", gain);
-            next = { ...next, v: SAVE_VERSION };
-            saveIdleSave(next);
             saveRef.current = next;
             return next;
           });
         }
-      }
-
-      const rates = materialRates(current);
-      for (const id of MATERIAL_IDS) accruedMaterials[id] += rates[id] * dt;
-      materialElapsed += dt;
-      if (materialElapsed >= 1 && MATERIAL_IDS.some((id) => accruedMaterials[id] > 0)) {
-        const gain = { ...accruedMaterials };
-        for (const id of MATERIAL_IDS) accruedMaterials[id] = 0;
-        materialElapsed = 0;
-        setSave((previous) => {
-          const next: IdleSave = {
-            ...previous,
-            materials: {
-              wood: previous.materials.wood + gain.wood,
-              stone: previous.materials.stone + gain.stone,
-              herb: previous.materials.herb + gain.herb,
-            },
-          };
-          saveRef.current = next;
-          return next;
-        });
       }
       frame = requestAnimationFrame(tick);
     };
@@ -170,6 +175,7 @@ export function useIdleGame() {
     if (!save.auto) return;
 
     const timer = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
       setSave((previous) => {
         let next = ensureDailyMissionDate(previous);
         // beberapa pembelian per tick supaya tidak tertinggal saat laju tinggi
@@ -196,6 +202,7 @@ export function useIdleGame() {
   // Local date rollover is applied even while the tab stays open.
   useEffect(() => {
     const rollDate = () => {
+      if (document.visibilityState !== "visible") return;
       const current = saveRef.current;
       const next = ensureDailyMissionDate(current);
       if (next === current) return;
@@ -211,23 +218,83 @@ export function useIdleGame() {
 
   // ------------------------------------------------------------ periodic save
   useEffect(() => {
+    const checkpoint = (now = Date.now()) => {
+      const next = { ...saveRef.current, v: SAVE_VERSION, lastSeen: now };
+      saveRef.current = next;
+      setSave(next);
+      saveIdleSave(next);
+    };
+
+    const catchUp = () => {
+      if (document.visibilityState !== "visible") return;
+      const now = Date.now();
+      const current = saveRef.current;
+      // Apply elapsed time from the last durable checkpoint, even if Chrome
+      // suspended requestAnimationFrame while this tab was in the background.
+      const report = offlineReport(current, now, 0);
+      const materials = report.materials;
+      let next: IdleSave = {
+        ...current,
+        crystals: current.crystals + report.gain,
+        total: current.total + report.gain,
+        allTime: Math.max(current.allTime, current.total + report.gain),
+        best: Math.max(current.best, current.crystals + report.gain),
+        materials: {
+          wood: current.materials.wood + materials.wood,
+          stone: current.materials.stone + materials.stone,
+          herb: current.materials.herb + materials.herb,
+        },
+        lastSeen: now,
+        v: SAVE_VERSION,
+      };
+      if (report.gain > 0) next = addDailyMissionProgress(next, "crystals", report.gain);
+
+      const hasProgress = report.gain > 0 || MATERIAL_IDS.some((id) => materials[id] > 0);
+      if (hasProgress) {
+        if (!next.ach.includes("offline")) {
+          next = { ...next, ach: [...next.ach, "offline"] };
+        }
+        const unlocked = newlyUnlocked(next);
+        if (unlocked.length > 0) next = { ...next, ach: [...next.ach, ...unlocked] };
+      }
+
+      saveRef.current = next;
+      setSave(next);
+      saveIdleSave(next);
+      if (report.gain >= 1 || MATERIAL_IDS.some((id) => materials[id] > 0)) setOffline(report);
+      lastFrameAt.current = performance.now();
+    };
+
     const persist = () => {
-      saveIdleSave(saveRef.current);
+      if (document.visibilityState === "visible") checkpoint();
+      else saveIdleSave(saveRef.current);
       setSaveStatus(`tersimpan ${new Date().toLocaleTimeString("id-ID")}`);
     };
     const timer = window.setInterval(persist, 3000);
     persist();
-    const onHide = () => {
-      if (document.visibilityState === "hidden") saveIdleSave(saveRef.current);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "hidden") checkpoint();
+      else catchUp();
     };
-    const onPageHide = () => saveIdleSave(saveRef.current);
+    const onPageHide = () => checkpoint();
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) catchUp();
+    };
+    const onFreeze = () => saveIdleSave(saveRef.current);
+    const onResume = () => catchUp();
 
-    document.addEventListener("visibilitychange", onHide);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    document.addEventListener("freeze", onFreeze);
+    document.addEventListener("resume", onResume);
     window.addEventListener("pagehide", onPageHide);
+    window.addEventListener("pageshow", onPageShow);
     return () => {
       window.clearInterval(timer);
-      document.removeEventListener("visibilitychange", onHide);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      document.removeEventListener("freeze", onFreeze);
+      document.removeEventListener("resume", onResume);
       window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("pageshow", onPageShow);
     };
   }, []);
 

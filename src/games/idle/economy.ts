@@ -542,12 +542,12 @@ export function offlineCapSeconds(save: IdleSave): number {
 }
 
 /** Hitung progres saat tab ditutup (belum diterapkan ke save). */
-export function offlineReport(save: IdleSave, now = Date.now()): OfflineReport {
+export function offlineReport(save: IdleSave, now = Date.now(), minimumSeconds = OFFLINE_MIN_SECONDS): OfflineReport {
   const capSeconds = offlineCapSeconds(save);
   const efficiency = offlineEfficiency(save);
   const seconds = Math.min(capSeconds, Math.max(0, (now - save.lastSeen) / 1000));
   const materials = emptyMaterialBag();
-  if (seconds < OFFLINE_MIN_SECONDS) return { gain: 0, materials, seconds, efficiency, capSeconds };
+  if (seconds < minimumSeconds) return { gain: 0, materials, seconds, efficiency, capSeconds };
   for (const id of MATERIAL_IDS) materials[id] = materialBuildingRate(save, id) * seconds * efficiency;
   return { gain: production(save) * seconds * efficiency, materials, seconds, efficiency, capSeconds };
 }
