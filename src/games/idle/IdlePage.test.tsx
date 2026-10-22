@@ -136,6 +136,23 @@ describe("IdlePage", () => {
     expect(document.querySelector("#achievements")).toBeInTheDocument();
   });
 
+  it("peta mengikuti unlock tier dan masuk ke bangunan yang dipilih", async () => {
+    seed({ gens: { pick: 5, drill: 0 }, crystals: 10_000, total: 100_000, auto: false });
+    renderPage();
+
+    fireEvent.click(screen.getByRole("button", { name: "Peta Dunia" }));
+    expect(screen.getByRole("heading", { name: "Bor Tangan" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Zona 03, Rig Otomatis, terkunci/ }));
+    expect(document.querySelector(".world-map-detail")).toHaveTextContent("butuh 5 Bor Tangan (0/5)");
+    expect(screen.getByRole("button", { name: "Belum terbuka" })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole("button", { name: /Zona 02, Bor Tangan, terbuka/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Masuk tambang" }));
+    expect(document.querySelector('[data-gen="drill"]')).toBeInTheDocument();
+    await waitFor(() => expect(document.querySelector('[data-gen="drill"]')).toHaveFocus());
+  });
+
   it("menampilkan dialog progres offline dengan efisiensi", () => {
     seed({ gens: { pick: 20 }, crystals: 0, total: 0, lastSeen: Date.now() - 3_600_000 });
     renderPage();

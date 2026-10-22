@@ -2635,3 +2635,249 @@
 .idle-cabinet .idle-activity-panel #auto p {
   font-size: 0.59rem;
 }
+
+/* M5 — derive the world route and zone states from generator progression. */
+.idle-cabinet .world-map-panel {
+  padding-bottom: 0.85rem;
+}
+
+.idle-cabinet .world-map-heading {
+  align-items: flex-start;
+}
+
+.idle-cabinet .world-map-heading p {
+  margin: 0.35rem 0 0;
+  color: #91a189;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.idle-cabinet .world-map-canvas {
+  position: relative;
+  min-height: 340px;
+  margin: 0 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(151, 194, 123, 0.25);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(7, 14, 12, 0.24), rgba(5, 12, 9, 0.58)),
+    url("/images/idle/mine-scene.png") center 50% / cover no-repeat;
+  box-shadow: inset 0 0 70px rgba(4, 10, 7, 0.38);
+}
+
+.idle-cabinet .world-map-route {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.idle-cabinet .world-map-route polyline {
+  fill: none;
+  stroke: rgba(224, 241, 168, 0.82);
+  stroke-width: 5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 2 12;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 1px 4px rgba(7, 13, 6, 0.9));
+}
+
+.idle-cabinet .world-map-zone {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  width: 62px;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.idle-cabinet .world-map-zone-marker {
+  position: relative;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.38);
+  border-radius: 50%;
+  background: rgba(11, 23, 15, 0.91);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.idle-cabinet .world-map-zone-marker img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.idle-cabinet .world-map-zone[data-unlocked="false"] .world-map-zone-marker {
+  filter: grayscale(0.8) brightness(0.75);
+}
+
+.idle-cabinet .world-map-zone-marker i {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  border: 1px solid #69785f;
+  border-radius: 50%;
+  background: #172219;
+  color: #c8d6bd;
+  font-style: normal;
+  font-size: 10px;
+}
+
+.idle-cabinet .world-map-zone small {
+  padding: 0.12rem 0.25rem;
+  border-radius: 4px;
+  background: rgba(6, 13, 9, 0.78);
+  color: #e4eedb;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.idle-cabinet .world-map-zone[data-selected="true"] .world-map-zone-marker,
+.idle-cabinet .world-map-zone:hover .world-map-zone-marker,
+.idle-cabinet .world-map-zone:focus-visible .world-map-zone-marker {
+  border-color: #d4ff86;
+  box-shadow: 0 0 0 3px rgba(200, 243, 106, 0.18), 0 0 22px rgba(200, 243, 106, 0.35);
+  transform: scale(1.1);
+}
+
+.idle-cabinet .world-map-caption {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.75rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid rgba(200, 243, 106, 0.25);
+  border-radius: 5px;
+  background: rgba(8, 17, 11, 0.75);
+  color: #d9edc6;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.idle-cabinet .world-map-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.7rem 0.75rem 0;
+  padding: 0.7rem;
+  border: 1px solid #314330;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(31, 47, 33, 0.94), rgba(17, 27, 19, 0.98));
+}
+
+.idle-cabinet .world-map-detail-icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(200, 243, 106, 0.18);
+  border-radius: 9px;
+  background: rgba(200, 243, 106, 0.05);
+}
+
+.idle-cabinet .world-map-detail-icon img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+}
+
+.idle-cabinet .world-map-detail-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.idle-cabinet .world-map-detail-kicker {
+  color: #a7bf91;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.idle-cabinet .world-map-detail h3 {
+  overflow: hidden;
+  margin: 0.15rem 0;
+  color: #e4eedb;
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.idle-cabinet .world-map-detail p {
+  margin: 0;
+  color: #9eae96;
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.idle-cabinet .world-map-detail > button {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid rgba(200, 243, 106, 0.5);
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(104, 159, 50, 0.68), rgba(55, 96, 31, 0.86));
+  color: #f0ffdc;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.idle-cabinet .world-map-detail > button:disabled {
+  border-color: rgba(151, 194, 123, 0.15);
+  background: rgba(7, 14, 8, 0.36);
+  color: #84907d;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .idle-cabinet .world-map-canvas {
+    min-height: 310px;
+    margin-inline: 0.55rem;
+  }
+
+  .idle-cabinet .world-map-zone {
+    width: 48px;
+  }
+
+  .idle-cabinet .world-map-zone-marker {
+    width: 34px;
+    height: 34px;
+  }
+
+  .idle-cabinet .world-map-zone-marker img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .idle-cabinet .world-map-detail {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-inline: 0.55rem;
+  }
+
+  .idle-cabinet .world-map-detail-copy {
+    padding-top: 0.25rem;
+  }
+
+  .idle-cabinet .world-map-detail > button {
+    width: 100%;
+    margin-left: 3.8rem;
+  }
+}

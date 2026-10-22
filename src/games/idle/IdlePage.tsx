@@ -13,6 +13,7 @@ import { PrestigeDialog } from "./components/PrestigeDialog";
 import { PrestigePanel } from "./components/PrestigePanel";
 import { ShopList } from "./components/ShopList";
 import { UpgradesPanel } from "./components/UpgradesPanel";
+import { WorldMapPanel } from "./components/WorldMapPanel";
 import {
   ACHIEVEMENTS,
   GENERATORS,
@@ -34,7 +35,7 @@ const BUY_OPTIONS: Array<{ value: BuyAmount; label: string }> = [
   { value: "max", label: "max" },
 ];
 
-type TabId = "mine" | "research" | "prestige" | "archive";
+type TabId = "mine" | "research" | "prestige" | "archive" | "map";
 type DestinationId = "home" | "character" | "inventory" | "upgrade" | "map" | "settings";
 
 const DESTINATIONS: Array<{
@@ -52,6 +53,7 @@ const DESTINATIONS: Array<{
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: "mine", label: "tambang" },
   { id: "research", label: "riset" },
+  { id: "map", label: "peta" },
   { id: "prestige", label: "lebur" },
   { id: "archive", label: "arsip" },
 ];
@@ -82,14 +84,15 @@ export function IdlePage() {
     setSettingsOpen(false);
     if (next === "inventory") setTab("archive");
     if (next === "upgrade") setTab("research");
-    if (next === "home" || next === "character" || next === "map") setTab("mine");
+    if (next === "home" || next === "character") setTab("mine");
+    if (next === "map") setTab("map");
 
     const targetId = {
       home: "idle-dashboard",
       character: "auto",
       inventory: "archive-panel",
       upgrade: "idle-panel",
-      map: "depth-map",
+      map: "world-map",
     }[next];
     scrollTo(targetId);
   };
@@ -97,7 +100,18 @@ export function IdlePage() {
   const setPanelTab = (next: TabId) => {
     setTab(next);
     setSettingsOpen(false);
-    setDestination(next === "archive" ? "inventory" : next === "mine" ? "home" : "upgrade");
+    setDestination(next === "archive" ? "inventory" : next === "mine" ? "home" : next === "map" ? "map" : "upgrade");
+  };
+
+  const enterMapZone = (generatorId: string) => {
+    setPanelTab("mine");
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => {
+        const target = document.querySelector<HTMLElement>(`[data-gen="${generatorId}"]`);
+        target?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+        target?.focus({ preventScroll: true });
+      });
+    }
   };
 
   const runQuickAction = (action: "build" | "upgrade" | "recruit") => {
@@ -351,6 +365,10 @@ export function IdlePage() {
 
               {tab === "prestige" && (
                 <PrestigePanel save={save} onBuy={idle.buyCoreUpgrade} />
+              )}
+
+              {tab === "map" && (
+                <WorldMapPanel save={save} onEnter={enterMapZone} />
               )}
 
               {tab === "archive" && (

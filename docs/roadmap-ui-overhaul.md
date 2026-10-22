@@ -88,7 +88,7 @@ Implementasi: dua riset putaran kini berupa kartu teknologi yang menampilkan efe
 
 **Selesai bila:** semua kartu menjelaskan dampak langsung dan batas reset/ketahanannya.
 
-### M5 — Peta dunia dan progres zona
+### M5 — Peta dunia dan progres zona (selesai)
 
 **Hasil:** panel Peta Dunia memenuhi peran visual peta pada mockup tanpa membuat sistem progres kedua yang terpisah.
 
@@ -96,6 +96,8 @@ Implementasi: dua riset putaran kini berupa kartu teknologi yang menampilkan efe
 - Pilih zona untuk melihat tier yang terkait, produksi, dan syarat berikutnya; aksi “Masuk” membawa pemain ke panel Bangunan/tier relevan.
 - Hadiah zona, bila ditambahkan, harus memakai mata uang atau upgrade yang sudah didefinisikan.
 - Hindari save state peta duplikat kecuali ada progres yang tidak bisa dihitung dari save idle.
+
+Implementasi: panel Peta Dunia menampilkan jalur 10 zona di atas ilustrasi lanskap. Status buka dan hitungan zona diturunkan langsung dari tier generator; memilih zona menampilkan jumlah, produksi, atau syarat bukanya. Zona terbuka memiliki aksi Masuk tambang yang kembali ke kartu generator terkait. Pilihan peta bersifat sementara di UI dan tidak menambah state save.
 
 **Masih bisa dimainkan:** peta berfungsi sebagai navigasi/progres; pemain tetap bisa membeli tier berikutnya dan kembali ke tambang tanpa kehilangan konteks.
 
