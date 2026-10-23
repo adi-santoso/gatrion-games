@@ -32,6 +32,7 @@ import {
   offlineEfficiency,
   production,
 } from "./economy";
+import { revealElement } from "./scroll";
 import { useIdleGame } from "./useIdleGame";
 import type { BuyAmount, DailyMissionId, IdleSave } from "./types";
 
@@ -78,7 +79,7 @@ export function IdlePage() {
   const scrollTo = (targetId: string) => {
     if (typeof window.requestAnimationFrame === "function") {
       window.requestAnimationFrame(() => {
-        document.getElementById(targetId)?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+        revealElement(document.getElementById(targetId));
       });
     }
   };
@@ -118,7 +119,7 @@ export function IdlePage() {
     if (typeof window.requestAnimationFrame === "function") {
       window.requestAnimationFrame(() => {
         const target = document.querySelector<HTMLElement>(`[data-gen="${generatorId}"]`);
-        target?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+        revealElement(target);
         target?.focus({ preventScroll: true });
       });
     }

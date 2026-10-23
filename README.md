@@ -25,7 +25,7 @@ ditaruh di hosting mana pun (Netlify, Cloudflare Pages, GitHub Pages, nginx).
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 167 pemeriksaan (engine, reducer, statistik, ekonomi, format, UI, aset, desktop)
+npm test           # 174 pemeriksaan (engine, reducer, statistik, ekonomi, format, UI, aset, desktop)
 npm run build      # tsc --noEmit && vite build -> dist/
 npm run preview    # cek hasil build di :4173
 npm run dict       # regenerasi kamus Wordle (butuh jaringan)
@@ -239,6 +239,10 @@ Kunci lama (`gatrion.wordle.stats`, `gatrion.wordle.lang`, idle v1) dimigrasikan
   satu kolom dan jendela yang menggulir.
 - Wordle menerima prop `active`; jendela yang tidak fokus berhenti menangkap ketikan, dan input
   Spotlight/pengaturan tidak pernah masuk ke papan permainan.
+- Navigasi samping idle memakai `revealElement` (`games/idle/scroll.ts`): target diratakan ke atas di
+  dalam kontainer yang benar-benar menggulir, dan tidak ada gulir kalau target sudah terlihat. Dulu
+  `scrollIntoView({ block: "center" })` menggeser kabinet 1400px ke tengah, jadi klik menu langsung
+  melompat turun.
 
 ## Roadmap
 
