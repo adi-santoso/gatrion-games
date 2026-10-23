@@ -19,16 +19,29 @@ const MODE_OPTIONS: Array<{ value: Mode; label: string }> = [
   { value: "free", label: "bebas" },
 ];
 
-export function WordlePage() {
+interface WordlePageProps {
+  /** Jendela desktop yang tidak aktif tidak boleh mencuri ketikan. */
+  active?: boolean;
+}
+
+export function WordlePage({ active = true }: WordlePageProps = {}) {
   const wordle = useWordle();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const { press, game, dictionary } = wordle;
 
   useEffect(() => {
+    if (!active) return;
+
     const handler = (event: KeyboardEvent) => {
       if (settingsOpen) return;
       if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (
+        event.target instanceof Element &&
+        event.target.closest("input, textarea, select, [contenteditable='true']")
+      ) {
+        return;
+      }
 
       if (event.key === "Enter") {
         event.preventDefault();
@@ -42,14 +55,14 @@ export function WordlePage() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [press, settingsOpen]);
+  }, [press, settingsOpen, active]);
 
   const finished = game ? game.status !== "playing" : false;
   const stats = wordle.stats[wordle.settings.lang];
 
   return (
-    <Shell>
-      <main className="grid gap-12 pb-20 lg:grid-cols-[minmax(0,1fr)_252px] lg:gap-14">
+    <Shell chrome={false}>
+      <main className="grid gap-10 pb-10 pt-2 lg:grid-cols-[minmax(0,1fr)_252px] lg:gap-12">
         <section className="mx-auto w-full max-w-[340px] sm:max-w-[356px]">
           <div className="flex items-start justify-between gap-4">
             <div>

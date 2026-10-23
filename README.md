@@ -1,7 +1,9 @@
 # gatrion-games
 
 Dua game browser untuk mengisi jeda kerja: **Wordle dua bahasa** dan **Idle tambang**.
-Tanpa login, tanpa backend — semua progres disimpan di `localStorage`.
+Keduanya dibuka di dalam desktop bergaya macOS — jendela yang bisa digeser, dock, menu bar, dan
+Spotlight — tetapi tetap satu SPA tanpa login dan tanpa backend. Semua progres disimpan di
+`localStorage`.
 
 ## Stack
 
@@ -9,6 +11,7 @@ Tanpa login, tanpa backend — semua progres disimpan di `localStorage`.
 | --- | --- | --- |
 | Build | **Vite 8** | dev server + HMR, build statis, code splitting per kamus |
 | UI | **React 19** + **react-router-dom 7** | layar game adalah state machine; satu `useReducer` per game |
+| Desktop | window manager sendiri (`src/desktop`) | posisi, fokus, minimize, dan zoom jendela disimpan per pengguna |
 | Bahasa | **TypeScript** (strict) | skema save v1→v2, 3 status tile × 2 mode × 2 bahasa |
 | Style | **Tailwind CSS 4** via `@tailwindcss/vite` | CSS ter-build, tanpa FOUC |
 | Font | **@fontsource-variable** (Bricolage Grotesque, Inter, JetBrains Mono) | self-host, situs jalan tanpa internet |
@@ -22,7 +25,7 @@ ditaruh di hosting mana pun (Netlify, Cloudflare Pages, GitHub Pages, nginx).
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 108 pemeriksaan (engine, reducer, statistik, ekonomi, format, UI, aset)
+npm test           # 167 pemeriksaan (engine, reducer, statistik, ekonomi, format, UI, aset, desktop)
 npm run build      # tsc --noEmit && vite build -> dist/
 npm run preview    # cek hasil build di :4173
 npm run dict       # regenerasi kamus Wordle (butuh jaringan)
@@ -31,13 +34,46 @@ npm run icons      # regenerasi aset ikon idle (SVG; PNG butuh resvg)
 
 Butuh Node 20+.
 
+## Desktop
+
+Seluruh situs adalah satu desktop. Halaman beranda menjadi aplikasi **Gatrion**, dan setiap game
+terbuka sebagai jendela aplikasi sendiri.
+
+- **Menu bar** — logo Gatrion (Tentang, Pengaturan Sistem, sembunyikan, tutup semua), menu aplikasi
+  yang sedang aktif (Tentang, Keluar ⌘Q), Berkas (Jendela Baru ⌘N, Tutup ⌘W), Tampilan (mode
+  terang/gelap, perbesar, Mission Control), Jendela (minimalkan, daftar jendela), dan Bantuan.
+  Bagian kanan: Spotlight, Pusat Kendali (tema, animasi, ukuran dock, atur ulang tata letak), status
+  jaringan, baterai (kalau browser mendukung), serta jam dan kalender.
+- **Jendela** — tiga lampu lalu lintas (tutup, minimize, perbesar), judul di tengah, bisa digeser
+  dari title bar, di-resize dari delapan sisi, dan di-double-click untuk zoom. Jendela tidak aktif
+  meredup seperti macOS; fokus teratas menentukan menu aplikasi.
+- **Dock** — Launchpad, ikon tiap aplikasi, pintasan Pengaturan, dan thumbnail jendela yang
+  diperkecil. Ikon membesar saat kursor mendekat (magnifikasi), titik kecil menandai aplikasi yang
+  berjalan. Ukuran dock bisa kecil, sedang, atau besar.
+- **Cmd+Tab** — HUD ikon aplikasi yang berjalan; Tab memutar pilihan, lepas ⌘ untuk pindah, Esc
+  membatalkan. ⌘` memutar jendela aplikasi yang sama.
+- **Spotlight** (⌘Space atau ⌘K) — cari aplikasi dan perintah (ganti tema, Mission Control, atur
+  ulang tata letak, tutup semua jendela).
+- **Mission Control** (⌃↑ atau F3) — semua jendela dalam satu layar; klik untuk fokus.
+- **Launchpad** — kisi semua aplikasi, klik di luar atau Esc untuk menutup.
+- **Tata letak tersimpan** — posisi, ukuran, status zoom, dan fokus jendela disimpan di
+  `gatrion.desktop.windows.v1`; preferensi dock/animasi di `gatrion.desktop.prefs.v1`.
+
+Pintasan ⌘ yang juga dipakai browser (⌘W, ⌘N, ⌘T) bisa ditangkap browser lebih dulu; semua aksi yang
+sama selalu tersedia di menu. Di layar sempit (≤780px) jendela otomatis memenuhi layar tanpa resize,
+dan dock mengecil.
+
 ## Rute
 
-| URL | Isi |
+SPA memakai satu rute; URL lama tetap berfungsi sebagai deep link yang membuka jendelanya lalu
+kembali ke `/`.
+
+| URL | Hasil |
 | --- | --- |
-| `/` | hub: status harian, kristal idle, katalog game |
-| `/wordle` | Wordle (harian/bebas, hard mode, statistik, pengaturan) |
-| `/idle` | Idle tambang (kabinet game: HUD, stage inti, tab tambang/riset/lebur/arsip) |
+| `/` | desktop dengan jendela Gatrion (atau tata letak terakhir) |
+| `/wordle` | membuka jendela Wordle |
+| `/idle` | membuka jendela Idle tambang |
+| `/settings` | membuka jendela Pengaturan Sistem |
 
 ## Wordle
 
@@ -57,9 +93,11 @@ English. Tidak ada request jaringan saat bermain.
 
 ## Tema
 
-Default **mode terang**, dan ada tombol matahari/bulan di header setiap halaman untuk pindah ke
-gelah. Pilihan disimpan di `localStorage` (`gatrion.theme`) dan diterapkan oleh skrip kecil di
-`index.html` sebelum paint, jadi tidak ada kedipan saat memuat ulang.
+Default **mode terang**, dan tema bisa diganti dari Pusat Kendali di menu bar, dari aplikasi
+Pengaturan Sistem, atau dari tombol matahari/bulan di panel idle. Semua tombol memakai satu store
+tema (`lib/theme.ts`), jadi tidak ada dua panel yang bisa berbeda mode. Pilihan disimpan di
+`localStorage` (`gatrion.theme`) dan diterapkan oleh skrip kecil di `index.html` sebelum paint, jadi
+tidak ada kedipan saat memuat ulang.
 
 Seluruh warna berasal dari token di `src/styles/theme.css`: nilai terang di `@theme`, nilai gelap
 menimpa variabel yang sama di `[data-theme="dark"]`. Komponen tidak menyimpan warna sendiri,
@@ -118,13 +156,22 @@ Tanpa resvg skrip tetap menulis SVG saja. `iconAssets.test.ts` memastikan setiap
 index.html
 vite.config.ts            plugin react + tailwind, alokasi host preview, config vitest
 src/
-  main.tsx, App.tsx       router
+  main.tsx, App.tsx       satu rute: <Desktop />
   styles/theme.css        design token (terang + gelap) & komponen (tile, key, seg, kabinet idle)
+  styles/desktop.css      chrome macOS: wallpaper, menu bar, dock, jendela, overlay
   components/             Shell (nav/footer), ThemeToggle, SegmentedControl, Switch, Toast
   lib/storage.ts          wrapper localStorage bertipe + versi
-  lib/theme.ts            muat/simpan/terapkan tema terang-gelap
+  lib/theme.ts            store tema terang-gelap (dipakai menu bar & panel game)
   lib/format.ts           format angka (id-ID)
-  pages/HubPage.tsx       status harian + kristal dibaca dari storage
+  pages/HubPage.tsx       isi jendela Gatrion: katalog game, pintasan, status
+  desktop/
+    types.ts, geometry.ts        tipe jendela + hitung posisi, clamp, cascade, resize (pure)
+    storage.ts, useWindowManager.ts  buka/fokus/tutup/minimize/zoom + persistensi tata letak
+    usePrefs.ts                 preferensi dock & animasi
+    apps.tsx                    katalog aplikasi + pemetaan deep link
+    context.tsx                 API desktop untuk aplikasi di dalam jendela
+    components/Desktop.tsx      perakitan desktop, pintasan papan ketik, overlay
+    components/{MenuBar,Dock,WindowFrame,Spotlight,MissionControl,Launchpad,AboutDialog,AppSwitcher,SettingsApp}.tsx
   games/wordle/
     engine.ts             skor huruf ganda, hard mode, seed harian (pure)
     engine.test.ts        integritas kamus, skor, hard mode, determinisme seed
@@ -172,6 +219,8 @@ tanpa duplikat, jawaban selalu bagian dari daftar tebakan, dan jumlah di metadat
 | `gatrion.wordle.stats.v2` | statistik + streak harian per bahasa |
 | `gatrion.theme` | `light` (default) atau `dark` |
 | `gatrion.idle.save` | kristal, tier, riset, inti, upgrade permanen, pencapaian, waktu terakhir |
+| `gatrion.desktop.windows.v1` | aplikasi, posisi, ukuran, zoom, minimize, dan fokus tiap jendela |
+| `gatrion.desktop.prefs.v1` | ukuran dock dan pengaturan kurangi animasi |
 
 Kunci lama (`gatrion.wordle.stats`, `gatrion.wordle.lang`, idle v1) dimigrasikan otomatis.
 
@@ -182,6 +231,14 @@ Kunci lama (`gatrion.wordle.stats`, `gatrion.wordle.lang`, idle v1) dimigrasikan
 - Tema aktif ditandai `data-theme` pada `<html>`; `color-scheme` ikut berubah sehingga scrollbar dan
   kontrol bawaan browser menyesuaikan.
 - Semua aset (CSS, font, kamus) ikut di-bundle — situs jalan offline setelah load pertama.
+- Window manager memakai koordinat piksel di atas menu bar, jadi jendela tetap di tempatnya saat
+  viewport berubah ukuran (posisinya di-clamp, bukan di-reset). Nilai `z-index` jendela dirapikan
+  otomatis sebelum menabrak lapisan menu bar (46–50).
+- Game idle aslinya memakai `100vh` untuk sidebar-nya; di dalam jendela nilainya ditimpa menjadi
+  `height: 100%` supaya layout mengikuti jendela, bukan viewport. Di bawah 880px layout idle jadi
+  satu kolom dan jendela yang menggulir.
+- Wordle menerima prop `active`; jendela yang tidak fokus berhenti menangkap ketikan, dan input
+  Spotlight/pengaturan tidak pernah masuk ke papan permainan.
 
 ## Roadmap
 

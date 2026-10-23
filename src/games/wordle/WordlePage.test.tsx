@@ -62,6 +62,19 @@ describe("WordlePage", () => {
     expect(saved.id.wins).toBe(1);
   });
 
+  it("tidak menangkap ketikan saat jendelanya tidak aktif", async () => {
+    render(
+      <MemoryRouter>
+        <WordlePage active={false} />
+      </MemoryRouter>,
+    );
+    await screen.findByRole("grid", { name: "Papan tebakan" });
+
+    typeWord("kataa");
+
+    expect(document.querySelectorAll('.tile[data-filled="true"]')).toHaveLength(0);
+  });
+
   it("mode bebas menyediakan kata baru", async () => {
     renderPage();
     await screen.findByRole("grid", { name: "Papan tebakan" });

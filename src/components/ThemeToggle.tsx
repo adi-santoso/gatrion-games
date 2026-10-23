@@ -1,17 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
-import { applyTheme, loadTheme, saveTheme, type Theme } from "../lib/theme";
+import { useEffect } from "react";
+import { applyTheme, saveTheme, toggleTheme, useTheme } from "../lib/theme";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(loadTheme);
+  const theme = useTheme();
 
   useEffect(() => {
     applyTheme(theme);
     saveTheme(theme);
   }, [theme]);
-
-  const toggle = useCallback(() => {
-    setTheme((previous) => (previous === "dark" ? "light" : "dark"));
-  }, []);
 
   const next = theme === "dark" ? "terang" : "gelap";
 
@@ -19,7 +15,7 @@ export function ThemeToggle() {
     <button
       type="button"
       className="theme-toggle"
-      onClick={toggle}
+      onClick={() => toggleTheme()}
       aria-label={`Mode ${next}`}
       title={`Ganti ke mode ${next}`}
     >

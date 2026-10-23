@@ -7,7 +7,17 @@ const NAV = [
   { to: "/idle", label: "idle" },
 ];
 
-export function Shell({ children }: { children: ReactNode }) {
+interface ShellProps {
+  children: ReactNode;
+  /** Jendela desktop sudah punya menu bar dan judul sendiri. */
+  chrome?: boolean;
+}
+
+export function Shell({ children, chrome = true }: ShellProps) {
+  if (!chrome) {
+    return <div className="relative z-10 mx-auto max-w-4xl px-6 pb-2 pt-4">{children}</div>;
+  }
+
   return (
     <div className="relative z-10 mx-auto max-w-4xl px-6">
       <header className="flex items-center justify-between py-7">

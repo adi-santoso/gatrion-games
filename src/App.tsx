@@ -1,15 +1,11 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { IdlePage } from "./games/idle/IdlePage";
-import { WordlePage } from "./games/wordle/WordlePage";
-import { HubPage } from "./pages/HubPage";
+import { Route, Routes } from "react-router-dom";
+import { Desktop } from "./desktop/components/Desktop";
 
 export function App() {
   return (
     <Routes>
-      <Route path="/" element={<HubPage />} />
-      <Route path="/wordle" element={<WordlePage />} />
-      <Route path="/idle" element={<IdlePage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Satu rute: desktop menangani deep link /wordle dan /idle sebagai jendela. */}
+      <Route path="*" element={<Desktop />} />
     </Routes>
   );
 }
