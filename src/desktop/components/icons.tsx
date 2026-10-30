@@ -51,6 +51,20 @@ export function SnakeGlyph({ className }: GlyphProps) {
   );
 }
 
+/** Tiga kartu bertumpuk dengan satu angka kekuatan. */
+export function GwentGlyph({ className }: GlyphProps) {
+  return (
+    <svg {...base} className={className}>
+      <g stroke="#10140c" strokeWidth="2">
+        <rect x="12" y="18" width="24" height="32" rx="5" fill="#8bbd38" transform="rotate(-13 24 34)" />
+        <rect x="21" y="15" width="24" height="32" rx="5" fill="#e7efd8" transform="rotate(2 33 31)" />
+        <rect x="30" y="18" width="23" height="31" rx="5" fill="#c8f36a" transform="rotate(15 41 33)" />
+      </g>
+      <circle cx="45" cy="25" r="2.6" fill="#10140c" />
+    </svg>
+  );
+}
+
 export function SettingsGlyph({ className }: GlyphProps) {
   return (
     <svg {...base} className={className} fill="none">

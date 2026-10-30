@@ -1,4 +1,4 @@
-export type AppId = "gatrion" | "wordle" | "idle" | "snake" | "settings";
+export type AppId = "gatrion" | "wordle" | "idle" | "snake" | "gwent" | "settings";
 
 export interface Rect {
   x: number;

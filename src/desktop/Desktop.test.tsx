@@ -150,6 +150,17 @@ describe("Desktop", () => {
     expect(within(win).getByRole("button", { name: "Mulai ulang" })).toBeInTheDocument();
   });
 
+  it("membuka Duel Kartu dengan tangan penuh dan papan kosong", async () => {
+    renderDesktop();
+    fireEvent.click(dockButton("Duel Kartu"));
+
+    const win = await screen.findByRole("dialog", { name: "Duel Kartu" });
+    expect(within(win).getByTestId("gw-round")).toHaveTextContent("1/3");
+    expect(within(win).getByTestId("gw-total-player")).toHaveTextContent("0");
+    expect(within(win).getByTestId("gw-total-ai")).toHaveTextContent("0");
+    expect(within(win).getByTestId("gw-hand").querySelectorAll("button")).toHaveLength(10);
+  });
+
   it("menampilkan Launchpad dari ikon dock", async () => {
     renderDesktop();
     fireEvent.click(dockButton("Launchpad"));

@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import { HubPage } from "../pages/HubPage";
+import { GwentApp } from "../games/gwent/GwentApp";
 import { IdlePage } from "../games/idle/IdlePage";
 import { SnakePage } from "../games/snake/SnakePage";
 import { WordlePage } from "../games/wordle/WordlePage";
 import { SettingsApp } from "./components/SettingsApp";
-import { GatrionGlyph, SettingsGlyph, SnakeGlyph, WordleGlyph } from "./components/icons";
+import { GatrionGlyph, GwentGlyph, SettingsGlyph, SnakeGlyph, WordleGlyph } from "./components/icons";
 import type { AppId, WindowSize } from "./types";
 
 export interface AppDefinition {
@@ -67,6 +68,17 @@ export const APPS: AppDefinition[] = [
     render: ({ focused }) => <SnakePage active={focused} />,
   },
   {
+    id: "gwent",
+    name: "Duel Kartu",
+    shortName: "Kartu",
+    tagline: "Duel tiga baris ala Gwent melawan komputer.",
+    keywords: ["gwent", "kartu", "card", "duel", "strategi", "witcher"],
+    size: { w: 1160, h: 800 },
+    fill: true,
+    icon: <GwentGlyph />,
+    render: ({ focused }) => <GwentApp active={focused} />,
+  },
+  {
     id: "settings",
     name: "Pengaturan Sistem",
     shortName: "Pengaturan",
@@ -93,6 +105,7 @@ export function appFromPath(pathname: string): AppId | null {
   if (clean === "/wordle") return "wordle";
   if (clean === "/idle") return "idle";
   if (clean === "/snake") return "snake";
+  if (clean === "/gwent") return "gwent";
   if (clean === "/settings") return "settings";
   return null;
 }

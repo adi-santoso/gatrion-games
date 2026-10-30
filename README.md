@@ -1,6 +1,6 @@
 # gatrion-games
 
-Tiga game browser untuk mengisi jeda kerja: **Wordle dua bahasa**, **Idle tambang**, dan **Ular**.
+Empat game browser untuk mengisi jeda kerja: **Wordle dua bahasa**, **Idle tambang**, **Ular**, dan **Duel Kartu**.
 Semuanya dibuka di dalam desktop bergaya macOS — jendela yang bisa digeser, dock, menu bar, dan
 Spotlight — tetapi tetap satu SPA tanpa login dan tanpa backend. Semua progres disimpan di
 `localStorage`.
@@ -15,6 +15,7 @@ Spotlight — tetapi tetap satu SPA tanpa login dan tanpa backend. Semua progres
 | Bahasa | **TypeScript** (strict) | skema save v1→v2, 3 status tile × 2 mode × 2 bahasa |
 | Style | **Tailwind CSS 4** via `@tailwindcss/vite` | CSS ter-build, tanpa FOUC |
 | Font | **@fontsource-variable** (Bricolage Grotesque, Inter, JetBrains Mono) | self-host, situs jalan tanpa internet |
+| Engine kartu | **Phaser 4** (chunk lazy) | papan digambar di canvas; aturan tetap di TypeScript murni |
 | Test | **Vitest** + **@testing-library/react** (jsdom) | engine & alur UI |
 
 Tidak ada dependency runtime dari CDN: `npm run build` menghasilkan `dist/` statis yang bisa
@@ -74,6 +75,7 @@ kembali ke `/`.
 | `/wordle` | membuka jendela Wordle |
 | `/idle` | membuka jendela Idle tambang |
 | `/snake` | membuka jendela Ular |
+| `/gwent` | membuka jendela Duel Kartu |
 | `/settings` | membuka jendela Pengaturan Sistem |
 
 ## Wordle
@@ -105,6 +107,31 @@ Game arcade pertama yang memakai harness kanvas bersama (`src/engine`).
 - **Rekor** tersimpan di `gatrion.snake.best.v1`.
 - **Kanvas 2D** — bukan DOM: loop langkah tetap dengan delta yang di-clamp, kanvas mengikuti
   `devicePixelRatio` dan ukuran jendela, dan loop berhenti total saat jendela tidak fokus.
+
+## Duel Kartu
+
+Duel tiga baris ala Gwent melawan komputer, dimainkan penuh di dalam satu jendela.
+
+- **Tampilan** — papan digambar dengan **Phaser 4** di dalam canvas, dimuat lewat `import()`
+  dinamis sehingga `phaser` hanya masuk unduhan saat jendela kartu dibuka. Tanpa WebGL atau saat
+  `prefers-reduced-motion`, versi DOM yang sama dipakai sebagai fallback. Keduanya memakai state
+  dan aturan yang sama (`engine.ts` + `useGwent.ts`).
+- **Art 40 kartu** — satu ikon per kartu dari **game-icons.net** (CC BY 3.0), diunduh oleh
+  `tools/fetch-card-art.mjs`. Kredit lengkap ada di `ART-CREDITS.csv`, `artCredits.ts`, dan layar
+  kredit di aplikasi. Tidak ada aset dari The Witcher maupun hasil pencarian gambar tanpa lisensi.
+
+- **Papan** — tiga baris (Dekat, Jauh, Kepung) untuk masing-masing pihak, 10 kartu di tangan,
+  tiga ronde; dua kemenangan ronde mengakhiri pertandingan.
+- **Efek** — cuaca menurunkan satu baris kedua pihak menjadi 1, terompet menggandakan baris
+  sendiri, moral memberi +1 untuk tiap unit non-hero, dan bakar menghancurkan unit non-hero
+  terkuat di kedua sisi. Hero kebal ketiganya.
+- **Ronde baru** — pihak yang kalah membuka ronde berikutnya, dan masing-masing menarik 2 kartu
+  lalu 1 kartu dari deck.
+- **Lawan komputer** deterministik: memilih nilai langsung terbaik, menyimpan hero untuk ronde
+  ketiga, dan menutup ronde saat sudah unggul setelah pemain lewat.
+- **Rekor** menang/kalah tersimpan di `gatrion.gwent.record.v1`.
+- Aturan, skor, dan langkah lawan adalah logika murni (`games/gwent/engine.ts`, `ai.ts`); UI hanya
+  merender state. Nama kartu orisinal — tidak memakai teks atau aset The Witcher.
 
 ## Tema
 
@@ -209,11 +236,24 @@ src/
   games/snake/
     logic.ts              langkah, belok, tabrakan, makanan, kecepatan (pure, dites)
     SnakePage.tsx         papan kanvas memakai harness engine
+  games/gwent/
+    cards.ts              katalog kartu + dua dek (data murni)
+    engine.ts             aturan, skor, ronde, efek (pure, dites)
+    ai.ts                 heuristik lawan komputer (pure, dites)
+    storage.ts            rekor menang/kalah
+    GwentPage.tsx         fallback DOM: papan tiga baris, tangan, overlay hasil
+    GwentApp.tsx          pilih Phaser (WebGL) atau fallback DOM
+    PhaserBoard.tsx       host canvas: mount/pause/resize + kontrol DOM untuk a11y
+    useGwent.ts           state + langkah lawan, dipakai kedua tampilan
+    artCredits.ts         kredit ikon (dihasilkan script)
+    scene/layout.ts       posisi baris, kartu, tangan (pure, dites)
+    scene/GwentScene.ts   scene Phaser: gambar papan, animasi, intent
   data/wordle-id.json, wordle-en.json   kamus hasil generator (jangan diedit manual)
   test/setup.ts
 public/icons/idle/        aset lambang tier (PNG 192px + SVG sumber)
 tools/build-wordle-dict.js            generator kamus (Node murni, tanpa dependency)
 tools/build-idle-icons.mjs            generator aset ikon idle (SVG, PNG opsional)
+tools/fetch-card-art.mjs              unduh 40 ikon kartu (game-icons.net, CC BY 3.0)
 ```
 
 ## Kamus
@@ -245,6 +285,7 @@ tanpa duplikat, jawaban selalu bagian dari daftar tebakan, dan jumlah di metadat
 | `gatrion.theme` | `light` (default) atau `dark` |
 | `gatrion.idle.save` | kristal, tier, riset, inti, upgrade permanen, pencapaian, waktu terakhir |
 | `gatrion.snake.best.v1` | rekor skor Ular |
+| `gatrion.gwent.record.v1` | rekor menang/kalah Duel Kartu |
 | `gatrion.desktop.windows.v1` | aplikasi, posisi, ukuran, zoom, minimize, dan fokus tiap jendela |
 | `gatrion.desktop.prefs.v1` | ukuran dock dan pengaturan kurangi animasi |
 

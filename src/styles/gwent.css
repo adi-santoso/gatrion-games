@@ -1,0 +1,515 @@
+/* ==========================================================================
+   Duel Kartu — papan tiga baris ala Gwent.
+   Hanya memakai token tema gatrion supaya ikut terang/gelap.
+   ========================================================================== */
+
+.gwent-app {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 14px;
+  background: var(--mac-window-bg);
+  color: var(--color-ink);
+}
+
+.gw-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.gw-head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+}
+
+.gw-head p {
+  margin: 3px 0 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.gw-tally {
+  display: flex;
+  gap: 18px;
+  margin: 0;
+}
+
+.gw-tally div {
+  display: flex;
+  min-width: 34px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.gw-tally dt {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gw-tally dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.gw-board {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.gw-side {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 10px 8px;
+  border: 1px solid var(--color-line);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--mac-hover) 55%, transparent);
+}
+
+.gw-side[data-side="ai"] {
+  border-style: dashed;
+}
+
+.gw-side-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 3px;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gw-passed {
+  color: var(--color-line-strong);
+  font-style: normal;
+}
+
+.gw-total {
+  color: var(--color-ink);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.gw-row {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  border-top: 1px dashed var(--color-line);
+  padding-top: 2px;
+}
+
+.gw-row:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.gw-row-label {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gw-row-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 24px;
+  align-items: center;
+}
+
+.gw-mini {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: baseline;
+  gap: 4px;
+  padding: 2px 7px;
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  background: var(--mac-window-bg);
+  font-size: 10px;
+}
+
+.gw-mini[data-kind="hero"] {
+  border-color: var(--color-line-strong);
+}
+
+.gw-mini b {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.gw-mini span {
+  overflow: hidden;
+  max-width: 132px;
+  color: var(--color-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gw-row-score {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.gw-middle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px;
+}
+
+.gw-weather,
+.gw-turn {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+}
+
+.gw-turn {
+  margin-left: auto;
+  color: var(--color-ink);
+}
+
+.gw-button {
+  border: 1px solid var(--color-line-strong);
+  border-radius: 999px;
+  padding: 5px 13px;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 11px;
+  font-weight: 550;
+  transition:
+    background 0.14s ease,
+    border-color 0.14s ease;
+}
+
+.gw-button:hover:not(:disabled) {
+  background: var(--mac-hover);
+}
+
+.gw-button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.gw-target {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px dashed var(--color-line-strong);
+  border-radius: 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.gw-target span {
+  margin-right: 2px;
+  color: var(--color-muted);
+}
+
+.gw-cancel {
+  margin-left: auto;
+  border-style: dotted;
+}
+
+.gw-hand {
+  display: flex;
+  min-height: 70px;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.gw-card {
+  display: flex;
+  flex: 0 0 auto;
+  width: 88px;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  padding: 6px 7px 7px;
+  background: var(--mac-window-bg);
+  color: var(--color-ink);
+  text-align: left;
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.gw-card:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: var(--color-line-strong);
+}
+
+.gw-card[data-selected="true"] {
+  border-color: var(--color-line-strong);
+  box-shadow: 0 0 0 2px var(--mac-hover);
+}
+
+.gw-card:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.gw-card-str {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gw-card-name {
+  font-size: 10.5px;
+  line-height: 1.25;
+}
+
+.gw-card-row {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gw-empty {
+  align-self: center;
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.gw-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 24px;
+}
+
+.gw-log {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+}
+
+.gw-log li {
+  overflow: hidden;
+  max-width: 46%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gw-error {
+  margin: 0;
+  color: var(--color-danger, #c0392b);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+}
+
+.gw-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.gw-result {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 20px;
+  background: color-mix(in srgb, var(--mac-window-bg) 88%, transparent);
+  text-align: center;
+}
+
+.gw-result-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.gw-result span {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+}
+
+.gw-result .gw-button {
+  margin-top: 8px;
+}
+
+@media (max-width: 720px) {
+  .gw-row {
+    grid-template-columns: 38px minmax(0, 1fr) 26px;
+  }
+
+  .gw-card {
+    width: 80px;
+  }
+
+  .gw-tally {
+    gap: 12px;
+  }
+}
+
+/* ------------------------------------------------- papan Phaser (canvas) */
+
+.gwent-phaser {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 12px 10px;
+  background: #0b1512;
+  color: #ece9df;
+}
+
+.gwent-canvas {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0b1512;
+}
+
+.gwent-canvas canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.gwent-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #93a68f;
+}
+
+.gwent-bar button {
+  border: 1px solid rgba(236, 233, 223, 0.24);
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: transparent;
+  color: #ece9df;
+  font-size: 10.5px;
+  transition: background 0.14s ease;
+}
+
+.gwent-bar button:hover:not(:disabled) {
+  background: rgba(236, 233, 223, 0.1);
+}
+
+.gwent-bar button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.gwent-status {
+  color: #c8f36a;
+  font-weight: 600;
+}
+
+.gwent-status .gwent-spacer {
+  flex: 1 1 auto;
+}
+
+.gwent-spacer {
+  flex: 1 1 auto;
+}
+
+.gwent-target-inline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gwent-record {
+  color: #93a68f;
+}
+
+.gwent-credits {
+  margin: 0;
+  color: #6f8269;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  text-align: right;
+}
+
+.gwent-error {
+  margin: 0;
+  color: #e0776b;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.gwent-loading {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  background: #0b1512;
+  color: #c8f36a;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}

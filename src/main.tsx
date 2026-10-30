@@ -6,6 +6,7 @@ import "@fontsource-variable/inter";
 import "@fontsource-variable/jetbrains-mono";
 import "./styles/theme.css";
 import "./styles/desktop.css";
+import "./styles/gwent.css";
 import { App } from "./App";
 
 const container = document.getElementById("root");
