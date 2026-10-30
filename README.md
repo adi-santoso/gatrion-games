@@ -1,7 +1,7 @@
 # gatrion-games
 
-Dua game browser untuk mengisi jeda kerja: **Wordle dua bahasa** dan **Idle tambang**.
-Keduanya dibuka di dalam desktop bergaya macOS — jendela yang bisa digeser, dock, menu bar, dan
+Tiga game browser untuk mengisi jeda kerja: **Wordle dua bahasa**, **Idle tambang**, dan **Ular**.
+Semuanya dibuka di dalam desktop bergaya macOS — jendela yang bisa digeser, dock, menu bar, dan
 Spotlight — tetapi tetap satu SPA tanpa login dan tanpa backend. Semua progres disimpan di
 `localStorage`.
 
@@ -25,7 +25,7 @@ ditaruh di hosting mana pun (Netlify, Cloudflare Pages, GitHub Pages, nginx).
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 174 pemeriksaan (engine, reducer, statistik, ekonomi, format, UI, aset, desktop)
+npm test           # seluruh pemeriksaan (engine, reducer, statistik, ekonomi, format, UI, aset, desktop)
 npm run build      # tsc --noEmit && vite build -> dist/
 npm run preview    # cek hasil build di :4173
 npm run dict       # regenerasi kamus Wordle (butuh jaringan)
@@ -73,6 +73,7 @@ kembali ke `/`.
 | `/` | desktop dengan jendela Gatrion (atau tata letak terakhir) |
 | `/wordle` | membuka jendela Wordle |
 | `/idle` | membuka jendela Idle tambang |
+| `/snake` | membuka jendela Ular |
 | `/settings` | membuka jendela Pengaturan Sistem |
 
 ## Wordle
@@ -90,6 +91,20 @@ kembali ke `/`.
 
 Kamus di-*code split*: import dinamis per bahasa, jadi pemain ID tidak mengunduh daftar kata
 English. Tidak ada request jaringan saat bermain.
+
+## Ular
+
+Game arcade pertama yang memakai harness kanvas bersama (`src/engine`).
+
+- **Papan 17×17** — mulai tiga segmen, satu makanan. Menabrak dinding atau tubuh sendiri
+  mengakhiri permainan; mengisi seluruh papan adalah kemenangan.
+- **Kontrol** — panah atau WASD, spasi menjeda, R memulai ulang, atau pakai tombol di bawah papan.
+  Tombol hanya ditangkap saat jendela Ular fokus, dan kombinasi ⌘/⌃/⌥ tidak pernah dicegat, jadi
+  ⌘W, ⌘Space, dan ⌘Tab tetap milik desktop.
+- **Makin cepat** — 150 ms per langkah, turun 6 ms tiap makanan, batas tercepat 65 ms.
+- **Rekor** tersimpan di `gatrion.snake.best.v1`.
+- **Kanvas 2D** — bukan DOM: loop langkah tetap dengan delta yang di-clamp, kanvas mengikuti
+  `devicePixelRatio` dan ukuran jendela, dan loop berhenti total saat jendela tidak fokus.
 
 ## Tema
 
@@ -163,6 +178,13 @@ src/
   lib/storage.ts          wrapper localStorage bertipe + versi
   lib/theme.ts            store tema terang-gelap (dipakai menu bar & panel game)
   lib/format.ts           format angka (id-ID)
+  engine/                 harness game 2D bersama (tanpa dependency baru)
+    loop.ts               fixed timestep + fitGrid (pure, dites)
+    canvas.ts             fitCanvas (DPR), clear, kotak tumpul, label HUD
+    input.ts              pemetaan tombol, state ditahan, press sekali pakai
+    useGameLoop.ts        RAF + ResizeObserver + pause saat jendela tidak fokus
+    useGameInput.ts       input keyboard ter-scope jendela
+    index.ts              API publik + resep menambah game
   pages/HubPage.tsx       isi jendela Gatrion: katalog game, pintasan, status
   desktop/
     types.ts, geometry.ts        tipe jendela + hitung posisi, clamp, cascade, resize (pure)
@@ -184,6 +206,9 @@ src/
     economy.ts            tier, milestone, riset, inti, prestise, auto-beli, offline (pure)
     storage.ts, useIdleGame.ts
     IdlePage.tsx, components/{ShopList,UpgradesPanel,PrestigePanel,PrestigeDialog,AutoSection,ClickPad,AchievementsList,OfflineDialog,Glyphs}.tsx
+  games/snake/
+    logic.ts              langkah, belok, tabrakan, makanan, kecepatan (pure, dites)
+    SnakePage.tsx         papan kanvas memakai harness engine
   data/wordle-id.json, wordle-en.json   kamus hasil generator (jangan diedit manual)
   test/setup.ts
 public/icons/idle/        aset lambang tier (PNG 192px + SVG sumber)
@@ -219,6 +244,7 @@ tanpa duplikat, jawaban selalu bagian dari daftar tebakan, dan jumlah di metadat
 | `gatrion.wordle.stats.v2` | statistik + streak harian per bahasa |
 | `gatrion.theme` | `light` (default) atau `dark` |
 | `gatrion.idle.save` | kristal, tier, riset, inti, upgrade permanen, pencapaian, waktu terakhir |
+| `gatrion.snake.best.v1` | rekor skor Ular |
 | `gatrion.desktop.windows.v1` | aplikasi, posisi, ukuran, zoom, minimize, dan fokus tiap jendela |
 | `gatrion.desktop.prefs.v1` | ukuran dock dan pengaturan kurangi animasi |
 
@@ -238,7 +264,15 @@ Kunci lama (`gatrion.wordle.stats`, `gatrion.wordle.lang`, idle v1) dimigrasikan
   `height: 100%` supaya layout mengikuti jendela, bukan viewport. Di bawah 880px layout idle jadi
   satu kolom dan jendela yang menggulir.
 - Wordle menerima prop `active`; jendela yang tidak fokus berhenti menangkap ketikan, dan input
-  Spotlight/pengaturan tidak pernah masuk ke papan permainan.
+  Spotlight/pengaturan tidak pernah masuk ke papan permainan. Ular memakai aturan yang sama lewat
+  `active` di `useGameInput`/`useGameLoop`.
+- Game kanvas memakai harness `src/engine`: update langkah tetap (`consumeFrame`, delta di-clamp
+  100 ms), render mengikuti refresh rate, kanvas mengikuti `devicePixelRatio` dan `ResizeObserver`,
+  dan loop berhenti total saat jendela tidak fokus. Input hanya menangkap tombol yang dipetakan.
+- Menambah game baru = logika murni + halaman, lalu dua titik daftar: union `AppId` di
+  `desktop/types.ts` dan satu entri `APPS` di `desktop/apps.tsx` (`fill: true`). Dock, Launchpad,
+  Spotlight, menu, ⌘Tab, dan persistensi tata letak mengikuti otomatis. Engine 3D (kalau nanti
+  dibutuhkan) harus `import()` di dalam `render()` satu aplikasi saja, bukan di root.
 - Navigasi samping idle memakai `revealElement` (`games/idle/scroll.ts`): target diratakan ke atas di
   dalam kontainer yang benar-benar menggulir, dan tidak ada gulir kalau target sudah terlihat. Dulu
   `scrollIntoView({ block: "center" })` menggeser kabinet 1400px ke tengah, jadi klik menu langsung

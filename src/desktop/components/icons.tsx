@@ -35,6 +35,22 @@ export function WordleGlyph({ className }: GlyphProps) {
   );
 }
 
+/** Ular melingkar: ekor redup, kepala lime dengan mata gelap. */
+export function SnakeGlyph({ className }: GlyphProps) {
+  return (
+    <svg {...base} className={className}>
+      <g stroke="#10140c" strokeWidth="2">
+        <rect x="10" y="10" width="17" height="17" rx="5" fill="#6f9f2e" />
+        <rect x="27" y="10" width="17" height="17" rx="5" fill="#8bbd38" />
+        <rect x="27" y="27" width="17" height="17" rx="5" fill="#a9d94a" />
+        <rect x="44" y="27" width="13" height="17" rx="5" fill="#c8f36a" />
+      </g>
+      <circle cx="50" cy="33" r="1.9" fill="#10140c" />
+      <circle cx="50" cy="39" r="1.9" fill="#10140c" />
+    </svg>
+  );
+}
+
 export function SettingsGlyph({ className }: GlyphProps) {
   return (
     <svg {...base} className={className} fill="none">

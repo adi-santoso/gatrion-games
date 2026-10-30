@@ -139,6 +139,17 @@ describe("Desktop", () => {
     expect(await screen.findByRole("dialog", { name: "Idle Tambang" })).toBeInTheDocument();
   });
 
+  it("membuka Ular dari dock sebagai aplikasi yang siap dimainkan", async () => {
+    renderDesktop();
+    fireEvent.click(dockButton("Ular"));
+
+    const win = await screen.findByRole("dialog", { name: "Ular" });
+    expect(win).toHaveAttribute("data-focused", "true");
+    expect(within(win).getByTestId("snake-score")).toHaveTextContent("0");
+    expect(within(win).getByTestId("snake-status")).toHaveTextContent("siap");
+    expect(within(win).getByRole("button", { name: "Mulai ulang" })).toBeInTheDocument();
+  });
+
   it("menampilkan Launchpad dari ikon dock", async () => {
     renderDesktop();
     fireEvent.click(dockButton("Launchpad"));

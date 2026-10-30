@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import { HubPage } from "../pages/HubPage";
 import { IdlePage } from "../games/idle/IdlePage";
+import { SnakePage } from "../games/snake/SnakePage";
 import { WordlePage } from "../games/wordle/WordlePage";
 import { SettingsApp } from "./components/SettingsApp";
-import { GatrionGlyph, SettingsGlyph, WordleGlyph } from "./components/icons";
+import { GatrionGlyph, SettingsGlyph, SnakeGlyph, WordleGlyph } from "./components/icons";
 import type { AppId, WindowSize } from "./types";
 
 export interface AppDefinition {
@@ -25,7 +26,7 @@ export const APPS: AppDefinition[] = [
     id: "gatrion",
     name: "Gatrion",
     shortName: "Gatrion",
-    tagline: "Dua game kecil untuk mengisi jeda kerja.",
+    tagline: "Game kecil untuk mengisi jeda kerja.",
     keywords: ["beranda", "home", "hub", "game", "start"],
     size: { w: 900, h: 660 },
     fill: false,
@@ -55,6 +56,17 @@ export const APPS: AppDefinition[] = [
     render: () => <IdlePage />,
   },
   {
+    id: "snake",
+    name: "Ular",
+    shortName: "Ular",
+    tagline: "Ular klasik di papan 17×17, makin cepat tiap makan.",
+    keywords: ["ular", "snake", "arcade", "refleks", "klasik"],
+    size: { w: 720, h: 700 },
+    fill: true,
+    icon: <SnakeGlyph />,
+    render: ({ focused }) => <SnakePage active={focused} />,
+  },
+  {
     id: "settings",
     name: "Pengaturan Sistem",
     shortName: "Pengaturan",
@@ -80,6 +92,7 @@ export function appFromPath(pathname: string): AppId | null {
   const clean = pathname.replace(/\/+$/, "");
   if (clean === "/wordle") return "wordle";
   if (clean === "/idle") return "idle";
+  if (clean === "/snake") return "snake";
   if (clean === "/settings") return "settings";
   return null;
 }

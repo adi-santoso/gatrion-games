@@ -37,7 +37,7 @@ export function HubPage() {
       <header className="home-head">
         <div>
           <p className="home-kicker">gatrion · games</p>
-          <h1 className="home-title">Dua game, satu desktop.</h1>
+          <h1 className="home-title">Game kecil, satu desktop.</h1>
           <p className="home-lead">
             Buka jendelanya seperti aplikasi biasa. Progres tetap tersimpan di browser ini, tanpa akun.
           </p>
